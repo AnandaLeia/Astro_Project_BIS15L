@@ -21,6 +21,8 @@ https://www.kaggle.com/datasets/nasa/kepler-exoplanet-search-results
 Exoplanets and Properties:
 https://www.kaggle.com/datasets/shivamb/all-exoplanets-dataset
 https://www.kaggle.com/datasets/adityamishraml/nasaexoplanets
+Habitability:
+https://www.kaggle.com/code/chandrimad31/a-small-research-on-exoplanet-habitability/data
 
 Asteroids:
 https://www.kaggle.com/datasets/sakhawat18/asteroid-dataset
