@@ -23,6 +23,7 @@ https://www.kaggle.com/datasets/shivamb/all-exoplanets-dataset
 https://www.kaggle.com/datasets/adityamishraml/nasaexoplanets
 Habitability:
 https://www.kaggle.com/code/chandrimad31/a-small-research-on-exoplanet-habitability/data
+https://figshare.com/articles/dataset/Planet_and_host_star_properties/6137672?file=12442103 
 
 Asteroids:
 https://www.kaggle.com/datasets/sakhawat18/asteroid-dataset
