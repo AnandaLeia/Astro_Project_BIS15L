@@ -1,0 +1,19 @@
+---
+title: "solar_first_look"
+author: "Ananda Leia"
+date: "2023-02-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+solar <- read.csv("solar_lunar_data/solar.csv")
+solar
+```
+```{r}
+str(solar)
+```
+
