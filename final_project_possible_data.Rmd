@@ -55,3 +55,6 @@ https://www.kaggle.com/datasets/jodiemullins/1900-2022-primary-moon-phases-utc7-
 
 ***Solar and Lunar Eclipses:***
 https://www.kaggle.com/datasets/nasa/solar-eclipses
+
+Solar Eclipses (NASA, counts of eclipses by century)
+https://data.world/nasa/five-millennium-catalog-of-solar-eclipses
