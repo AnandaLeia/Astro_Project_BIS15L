@@ -52,3 +52,6 @@ https://www.kaggle.com/datasets/lsind18/full-moon-calendar-1900-2050
 
 Moon Phases 1900-2022: (full/new/1st/3rd)
 https://www.kaggle.com/datasets/jodiemullins/1900-2022-primary-moon-phases-utc7-timezone
+
+***Solar and Lunar Eclipses:***
+https://www.kaggle.com/datasets/nasa/solar-eclipses
