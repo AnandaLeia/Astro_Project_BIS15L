@@ -8,13 +8,60 @@ date: "2023-03-02"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(skimr)
+library(naniar)
+library(here)
+library(RColorBrewer)
+```
+
 ## Loading the Data
 ```{r}
-getwd(
-)
+getwd()
 ```
 
 ```{r}
 solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L-main/NASA lunar and solar eclipses/solar.csv")
 ```
+```{r}
+lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L-main/NASA lunar and solar eclipses/lunar.csv")
+```
+
+
+## Cleaning Names
+```{r}
+solar <- janitor::clean_names(solar_eclipse)
+```
+```{r}
+names(solar)
+```
+
+```{r}
+lunar <- janitor::clean_names(lunar_eclipse)
+```
+```{r}
+names(lunar)
+```
+
+## Exploring
+```{r}
+glimpse(solar)
+```
+
+```{r}
+glimpse(lunar)
+```
+
+
+## Fixing Dates
+
+```{r}
+
+```
+
+
+
 
