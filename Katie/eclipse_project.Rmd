@@ -1,0 +1,20 @@
+---
+title: "eclipse_project"
+output: html_document
+date: "2023-03-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Loading the Data
+```{r}
+getwd(
+)
+```
+
+```{r}
+solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L-main/NASA lunar and solar eclipses/solar.csv")
+```
+
