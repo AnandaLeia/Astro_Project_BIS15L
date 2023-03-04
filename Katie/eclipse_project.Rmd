@@ -15,7 +15,12 @@ library(janitor)
 library(skimr)
 library(naniar)
 library(here)
+library(gtools)
 library(RColorBrewer)
+library(paletteer)
+library(ggthemes)
+library(shiny)
+library(shinydashboard)
 ```
 
 ## Loading the Data
@@ -23,11 +28,13 @@ library(RColorBrewer)
 getwd()
 ```
 
+data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
+
 ```{r}
-solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L-main/NASA lunar and solar eclipses/solar.csv")
+solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
 ```
 ```{r}
-lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L-main/NASA lunar and solar eclipses/lunar.csv")
+lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
 ```
 
 
@@ -56,12 +63,88 @@ glimpse(lunar)
 ```
 
 
-## Fixing Dates
-
+## Converting Latitude and Longitude Coords
 ```{r}
-
+lunar <- lunar %>% 
+  select(latitude, longitude) %>% 
+  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  mutate(lat_num = as.numeric(lat)) %>% 
+  mutate(long_num = as.numeric(long)) %>% 
+  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
+  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num)) 
+lunar %>% 
+  select(latitude_value, longitude_value)
+```
+```{r}
+solar <- solar %>% 
+  select(latitude, longitude) %>% 
+  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  mutate(lat_num = as.numeric(lat)) %>% 
+  mutate(long_num = as.numeric(long)) %>% 
+  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
+  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num)) 
+solar %>% 
+  select(latitude_value, longitude_value)
 ```
 
+## Mapping Framework
+```{r}
+lunar %>% 
+  select(latitude_value, longitude_value) %>% 
+  summary()
+```
+```{r}
+lat_l <- c(-25, 25)
+long_l <- c(-180, 180)
+bbox_l <- c(lat_l, long_l, f=0.05)
+```
+
+```{r}
+solar %>% 
+  select(latitude_value, longitude_value) %>% 
+  summary()
+```
+```{r}
+lat_s <- c(-88.5, 89)
+long_s <- c(-180, 180)
+bbox_s <- c(lat_s, long_s, f=0.05)
+```
+
+
+
+
+
+
+## App Framework
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Solar and Lunar Eclipses"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("solar_or_lunar", " Solar or Lunar Eclipses:", choices=c("Solar", "Lunar"), 
+                  helpText("Reference: ")),
+      mainPanel(
+        plotOutput("plot"))
+      )
+  )
+)
+
+server <- function(input, output, session) {
+  plotOutput$plot <- renderPlot({
+      filter(taxon=input$x)
+      ggplot(data=homerange, aes_string(x=log10.hra))+
+      geom_density()
+  })
+  
+}
+
+shinyApp(ui, server)
+```
 
 
 
