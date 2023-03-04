@@ -8,12 +8,51 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
+Load these packages:
 ```{r}
-solar <- read.csv("solar_lunar_data/solar.csv")
+#library(tidyverse)
+#library(lubridate)
+#library(janitor)
+#library(dplyr)
+```
+Import the Solar Eclipse Dataset and clean names:
+```{r}
+solar <- read.csv("solar_lunar_data/solar.csv") %>% 
+  clean_names()
 solar
 ```
 ```{r}
-str(solar)
+solar %>% 
+  filter((calendar_date, 1, 1) != "-")
 ```
+```{r}
+class("calendar_date")
+```
+```{r}
+solar$calendar_date <- ymd(solar$calendar_date)
+solar
+```
+
+```{r}
+solar %>% 
+  mutate(caldate = as.Date(calendar_date, format = "%Y %B %e"))
+```
+
+```{r}
+solar %>% 
+  pivot_wider()
+```
+
+
+```{r}
+solar %>% 
+  mutate(date = lubridate::ymd(calendar_date))
+```
+```{r}
+?strptime
+```
+https://sscc.wisc.edu/sscc/pubs/dwr/dates.html
+http://jenrichmond.rbind.io/post/converting-characters-to-dates/
+https://stackoverflow.com/questions/62928278/r-how-should-i-format-a-b-c-e-date-in-timevis
+https://github.com/daattali/timevis/issues/99
 
