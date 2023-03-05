@@ -31,10 +31,10 @@ getwd()
 data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
 
 ```{r}
-solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
+solar_eclipse <- read_csv("/Users/katiericketts/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
 ```
 ```{r}
-lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
+lunar_eclipse <- read_csv("/Users/katiericketts/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
 ```
 
 
@@ -61,6 +61,15 @@ glimpse(solar)
 ```{r}
 glimpse(lunar)
 ```
+
+## Variable Meanings:
+
+#### Key to Catalog of Lunar Eclipses:
+https://eclipse.gsfc.nasa.gov/LEcat5/LEcatkey.html
+
+##### Key to Catalog of Solar Eclipses:
+https://eclipse.gsfc.nasa.gov/SEcat5/SEcatkey.html
+
 
 
 ## Converting Latitude and Longitude Coords
@@ -98,7 +107,7 @@ lunar %>%
 ```{r}
 lat_l <- c(-25, 25)
 long_l <- c(-180, 180)
-bbox_l <- c(lat_l, long_l, f=0.05)
+bbox_l <- make_bbox(lat_l, long_l, f=0.05)
 ```
 
 ```{r}
@@ -109,7 +118,7 @@ solar %>%
 ```{r}
 lat_s <- c(-88.5, 89)
 long_s <- c(-180, 180)
-bbox_s <- c(lat_s, long_s, f=0.05)
+bbox_s <- make_bbox(lat_s, long_s, f=0.05)
 ```
 
 
