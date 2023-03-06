@@ -1,0 +1,65 @@
+---
+title: "Final Project"
+author: "Jonathan Sunkari"
+date: "2023-03-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library("tidyverse")
+library(readr)
+```
+
+```{r}
+lunar <- read_csv("data/lunar.csv")
+solar <- read_csv("data/solar.csv")
+```
+
+```{r}
+names(lunar)
+names(solar)
+```
+```{r}
+install.packages("shinydashboard")
+library(shinydashboard)
+```
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  tags$head(
+    #tags$link(rel = "stylesheet", type = "text/css", href = "dark_mode.css")
+  ),
+  tags$div(
+    h1("Hello Shiny!"),
+    hr(),
+    p(strong("bold font "), em("italic font")),
+    p(code("code block")),
+    a(href="http://www.google.com", "link to Google"),
+    HTML('<p>
+         <label>A numeric input:</label><br /> 
+         <input type="number" name="n" value="7" min="1" max="30" />
+         </p>')
+    )
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+
+
+- merge data
+  - rename columns/full_join
+- look at correlations between location and date, duration and location, etc. (summarise, ggplot)
+- make a facet graph that plans out the app
+- make an app that tracks and predicts eclipse location/path, duration and date
+- put everything on a slideshow
