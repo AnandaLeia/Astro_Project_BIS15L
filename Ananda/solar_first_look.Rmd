@@ -10,10 +10,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 Load these packages:
 ```{r}
-#library(tidyverse)
-#library(lubridate)
-#library(janitor)
-#library(dplyr)
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(dplyr)
 ```
 Import the Solar Eclipse Dataset and clean names:
 ```{r}
@@ -21,36 +21,33 @@ solar <- read.csv("solar_lunar_data/solar.csv") %>%
   clean_names()
 solar
 ```
-```{r}
-solar %>% 
-  filter((calendar_date, 1, 1) != "-")
-```
+
 ```{r}
 class("calendar_date")
 ```
 ```{r}
-solar$calendar_date <- ymd(solar$calendar_date)
-solar
+solar_dates <- solar %>% 
+  filter(!grepl("^-", calendar_date)) %>% 
+  mutate(date = as.Date(calendar_date, format = "%Y %B %e")) %>% 
+  select(!c(calendar_date)) %>% 
+  mutate(year = lubridate::year(date),
+         month = lubridate::month(date),
+         day = lubridate::day(date))
+solar_dates
 ```
-
+Change character dates to date format:
 ```{r}
 solar %>% 
   mutate(caldate = as.Date(calendar_date, format = "%Y %B %e"))
 ```
-
 ```{r}
-solar %>% 
-  pivot_wider()
+solar_dates %>% 
+  filter(eclipse_type=="T") %>% 
+  filter(year>=2000, year<=3000) %>% 
+  ggplot(aes(x=year))+
+  geom_bar()
 ```
 
-
-```{r}
-solar %>% 
-  mutate(date = lubridate::ymd(calendar_date))
-```
-```{r}
-?strptime
-```
 https://sscc.wisc.edu/sscc/pubs/dwr/dates.html
 http://jenrichmond.rbind.io/post/converting-characters-to-dates/
 https://stackoverflow.com/questions/62928278/r-how-should-i-format-a-b-c-e-date-in-timevis
