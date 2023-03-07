@@ -1,0 +1,33 @@
+---
+title: "lunar_first_look"
+author: "Ananda Leia"
+date: "2023-03-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Import Lunar Eclipse Dataset and clean names:
+```{r}
+lunar <- read_csv("solar_lunar_data/lunar.csv") %>% 
+  clean_names()
+```
+Change Calendar Date Variable to Date Type
+```{r}
+class("calendar_date")
+```
+```{r}
+lunar_dates <- lunar %>% 
+  filter(!grepl("^-", calendar_date)) %>% 
+  mutate(date = as.Date(calendar_date, format = "%Y %B %e")) %>% 
+  select(!c(calendar_date)) %>% 
+  mutate(year = lubridate::year(date),
+         month = lubridate::month(date),
+         day = lubridate::day(date))
+lunar_dates
+```
+```{r}
+
+```

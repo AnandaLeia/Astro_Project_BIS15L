@@ -1,0 +1,128 @@
+---
+title: "Final Project"
+author: "Jonathan Sunkari"
+date: "2023-03-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library("tidyverse")
+library(readr)
+library(janitor)
+library(ggmap)
+install.packages("devtools")
+library(devtools)
+devtools::install_github("dkahle/ggmap")
+```
+
+```{r}
+lunar <- read_csv("data/lunar.csv")
+solar <- read_csv("data/solar.csv")
+```
+
+```{r}
+names(lunar)
+names(solar)
+```
+```{r}
+install.packages("shinydashboard")
+library(shinydashboard)
+```
+
+```{r}
+lunar <- lunar %>% 
+  select(latitude, longitude) %>% 
+  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  mutate(lat_num = as.numeric(lat)) %>% 
+  mutate(long_num = as.numeric(long)) %>% 
+  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
+  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num)) 
+```
+
+
+```{r}
+## Clean Names
+lunar <- clean_names(lunar)
+names(lunar)
+```
+
+
+```{r}
+## Visualizing What the Shiny App Will Display
+
+
+```
+
+
+```{r}
+## Trying to Personalize Shiny App with CSS
+library(shiny)
+
+ui <- fluidPage(
+  tags$head(
+    includeCSS("style.css"),
+  ),
+  tags$div(
+    tags$link(rel = "stylesheet", type = "text/css", href = "style.css"),
+    h1("Eclipse Analysis"),
+    hr(),
+    #p(strong("bold font "), em("italic font")),
+    #p(code("code block")),
+    #a(href="http://www.google.com", "link to Google"),
+  selectInput("x", "Select Catalog Number", choices = c("00001", "00002", "00003", "00004"),
+              selected = "00001"),
+  #sliderInput("pointsize", "Select the Point Size", min = 0.5, max = 3, value = 1, step = 0.5),
+  plotOutput("plot", width = "500px", height = "400px")
+  )
+)
+server <- function(input, output, session) {
+  output$plot <- renderPlot({
+  ggplot(lunar, aes_string(x = input$x, y = Gamma)) +
+      geom_col(alpha=0.8)
+  })
+}
+
+shinyApp(ui, server)
+```
+
+
+```{r}
+## Bare bones Dashboard shiny app 
+
+lat_l <- c(-80, 80)
+long_l <- c(-180, 180)
+bbox_l <- make_bbox(long_l, lat_l, f=0.05)
+map1 <- get_map(bbox_l, maptype = "terrain", source = "stamen")
+
+library(shiny)
+
+ui <- dashboardPage(
+  dashboardHeader(title = "Eclipses"),
+  dashboardSidebar(title="Catalog Number"),
+  dashboardBody(
+  selectInput("x", "Select Date", choices = c("1995 October 8", "1994 March 6", "1994 August 29", "1993 February 23"),
+              selected = "1993 February 23"),
+  plotOutput("map", width = "500px", height = "400px"))
+)
+
+server <- function(input, output, session) {
+  output$map <- renderPlot({
+    lunar %>%
+      filter(calendar_date == input$x) %>%
+      ggmap(map1) + 
+        geom_point(aes(longitude, latitude)) +
+        labs(x= "Longitude", y= "Latitude", title="Eclipse Locations")
+      })
+    }
+shinyApp(ui, server)
+```
+
+- input for lunar vs solar
+- input for range of years
+
+- output is a map of latitude and longitude for each eclipse, changing based on inputted year
