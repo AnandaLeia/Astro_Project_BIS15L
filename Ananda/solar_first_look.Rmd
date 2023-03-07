@@ -22,6 +22,7 @@ solar <- read.csv("solar_lunar_data/solar.csv") %>%
 solar
 ```
 
+Change Calendar Date Variable to Date Type
 ```{r}
 class("calendar_date")
 ```
@@ -35,11 +36,7 @@ solar_dates <- solar %>%
          day = lubridate::day(date))
 solar_dates
 ```
-Change character dates to date format:
-```{r}
-solar %>% 
-  mutate(caldate = as.Date(calendar_date, format = "%Y %B %e"))
-```
+
 ```{r}
 solar_dates %>% 
   filter(eclipse_type=="T") %>% 
