@@ -1,0 +1,254 @@
+---
+title: "eclipse_project"
+output: html_document
+date: "2023-03-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(skimr)
+library(naniar)
+library(here)
+library(gtools)
+library(RColorBrewer)
+library(paletteer)
+library(ggthemes)
+library(shiny)
+library(shinydashboard)
+library(ggmap)
+```
+
+## Loading the Data
+```{r}
+getwd()
+```
+
+data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
+
+```{r}
+solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
+```
+```{r}
+lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
+```
+
+
+## Cleaning Names
+```{r}
+solar_e <- janitor::clean_names(solar_eclipse)
+```
+```{r}
+names(solar_e)
+```
+
+```{r}
+lunar_e <- janitor::clean_names(lunar_eclipse)
+```
+```{r}
+names(lunar_e)
+```
+
+
+
+## Exploring
+```{r}
+glimpse(solar_e)
+```
+
+```{r}
+glimpse(lunar_e)
+```
+
+## Variable Meanings:
+
+#### Key to Catalog of Lunar Eclipses:
+https://eclipse.gsfc.nasa.gov/LEcat5/LEcatkey.html
+
+##### Key to Catalog of Solar Eclipses:
+https://eclipse.gsfc.nasa.gov/SEcat5/SEcatkey.html
+
+
+
+## Converting Latitude and Longitude Coords
+```{r}
+lunar <- lunar_e %>% 
+  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  mutate(lat_num = as.numeric(lat)) %>% 
+  mutate(long_num = as.numeric(long)) %>% 
+  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
+  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num)) 
+lunar %>%
+    select(latitude_value, longitude_value)
+```
+```{r}
+solar <- solar_e %>% 
+  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  mutate(lat_num = as.numeric(lat)) %>% 
+  mutate(long_num = as.numeric(long)) %>% 
+  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
+  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num))
+solar %>%
+    select(latitude_value, longitude_value)
+```
+
+## Convert Catalog Number to a Numeric
+```{r}
+solar$catalog_number <- as.numeric(solar$catalog_number)
+```
+```{r}
+lunar$catalog_number <- as.numeric(lunar$catalog_number)
+```
+
+
+## Mapping Framework
+```{r}
+lunar %>% 
+  select(latitude_value, longitude_value) %>% 
+  summary()
+```
+```{r}
+lat_l <- c(-70, 70)
+long_l <- c(-180, 180)
+bbox_l <- make_bbox(long_l, lat_l, f=0.05)
+```
+```{r}
+map_l <- get_map(bbox_l, maptype = "terrain", source = "stamen")
+```
+```{r}
+ggmap(map_l)
+```
+
+
+```{r}
+solar %>% 
+  select(latitude_value, longitude_value) %>% 
+  summary()
+```
+```{r}
+lat_s <- c(-80, 80)
+long_s <- c(-180, 180)
+bbox_s <- make_bbox(long_s, lat_s, f=0.05)
+```
+```{r}
+map_s <- get_map(bbox_s, maptype = "toner-lite", source = "stamen")
+```
+```{r}
+ggmap(map_s)
+```
+
+## Mapping Tests
+```{r}
+ggmap(map_s)+
+  geom_point(data=solar, aes(longitude_value, latitude_value))
+```
+```{r}
+solar_filtered_dates1 <- solar %>% 
+  arrange(catalog_number) %>% 
+  head(n=10)
+```
+```{r}
+ggmap(map_s)+
+  geom_point(data=solar_filtered_dates1, aes(longitude_value, latitude_value))
+```
+```{r}
+solar_filtered_dates2 <- solar %>% 
+  filter(catalog_number==1)
+```
+```{r}
+ggmap(map_s)+
+  geom_point(data=solar_filtered_dates2, aes(longitude_value, latitude_value))
+```
+```{r}
+solar_filtered_dates3 <- solar %>% 
+  filter(catalog_number<=10 & catalog_number>=1)
+```
+```{r}
+ggmap(map_s)+
+  geom_point(data=solar_filtered_dates3, aes(longitude_value, latitude_value, color=calendar_date, size=central_duration))+
+  labs(x="Latitude",
+       y="Longitude",
+       title="Solar Eclipses 1-10",
+       color="Date",
+       size="Central Duration")
+# we would need to filter out all observations with NA central duration from the very beginning - before even deciding year groupings
+```
+```{r}
+names(solar)
+```
+
+https://www.rebeccabarter.com/blog/2017-11-17-ggplot2_tutorial/ 
+
+
+
+
+
+
+
+```{r}
+naniar::miss_var_summary(solar)
+```
+```{r}
+naniar::miss_var_summary(lunar)
+```
+
+
+
+## Filtering by Eclipse Type
+```{r}
+lunar_filtered_type <- lunar %>% 
+  filter(eclipse_type=="T" | eclipse_type=="T+" |eclipse_type=="T-")
+lunar_filtered_type 
+# only shows the total lunar eclipses
+```
+
+```{r}
+solar_filtered_type <- solar %>% 
+  filter(eclipse_type=="T" | eclipse_type=="Ts" |eclipse_type=="Tm" | eclipse_type=="Tn" | eclipse_type=="T-" | eclipse_type=="T+")
+solar_filtered_type
+```
+
+
+
+
+
+
+
+## App Framework
+
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Solar and Lunar Eclipses"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("solar_or_lunar", " Solar or Lunar Eclipses:", choices=c("Solar", "Lunar"), 
+                  helpText("Reference: ")),
+      mainPanel(
+        plotOutput("plot"))
+      )
+  )
+)
+
+server <- function(input, output, session) {
+  plotOutput$plot <- renderPlot({
+      filter(taxon=input$x)
+      ggplot(data=homerange, aes_string(x=log10.hra))+
+      geom_density()
+  })
+  
+}
+
+shinyApp(ui, server)
+```
+
+
+
