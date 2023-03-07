@@ -14,14 +14,11 @@ library("tidyverse")
 library(readr)
 library(janitor)
 library(ggmap)
-install.packages("devtools")
-library(devtools)
-devtools::install_github("dkahle/ggmap")
 ```
 
 ```{r}
-lunar <- read_csv("data/lunar.csv")
-solar <- read_csv("data/solar.csv")
+lunar <- read_csv("lunar.csv")
+solar <- read_csv("solar.csv")
 ```
 
 ```{r}
@@ -32,23 +29,20 @@ names(solar)
 install.packages("shinydashboard")
 library(shinydashboard)
 ```
+```{r}
+lunar <- clean_names(lunar)
+```
+
+
 
 ```{r}
 lunar <- lunar %>% 
-  select(latitude, longitude) %>% 
   separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
   separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
   mutate(lat_num = as.numeric(lat)) %>% 
   mutate(long_num = as.numeric(long)) %>% 
   mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
   mutate(longitude_value = ifelse(EW=="E", long_num, -long_num)) 
-```
-
-
-```{r}
-## Clean Names
-lunar <- clean_names(lunar)
-names(lunar)
 ```
 
 
@@ -92,12 +86,30 @@ shinyApp(ui, server)
 
 
 ```{r}
-## Bare bones Dashboard shiny app 
+lat <- c(-80, 80)
+long <- c(-180, 180)
+bbox <- make_bbox(long, lat, f=0.05)
+map <- get_map(bbox, maptype = "terrain", source = "stamen")
+```
 
-lat_l <- c(-80, 80)
-long_l <- c(-180, 180)
-bbox_l <- make_bbox(long_l, lat_l, f=0.05)
-map1 <- get_map(bbox_l, maptype = "terrain", source = "stamen")
+```{r}
+new_lunar <- lunar %>%
+  filter(catalog_number=="00001"|catalog_number=="00002"|catalog_number=="00003"|catalog_number=="00004")
+
+ggmap(map) + 
+    geom_point(data=new_lunar, aes(longitude_value, latitude_value), size=0.4) +
+    labs(x= "Longitude", y= "Latitude", title="Eclipse Locations")
+```
+
+```{r}
+ggmap(map) + 
+      geom_point(data=lunar, aes(longitude_value, latitude_value), size=0.04) +
+      labs(x= "Longitude", y= "Latitude", title="Eclipse Locations")
+```
+
+
+```{r}
+## Bare bones Dashboard shiny app 
 
 library(shiny)
 
@@ -105,24 +117,26 @@ ui <- dashboardPage(
   dashboardHeader(title = "Eclipses"),
   dashboardSidebar(title="Catalog Number"),
   dashboardBody(
-  selectInput("x", "Select Date", choices = c("1995 October 8", "1994 March 6", "1994 August 29", "1993 February 23"),
-              selected = "1993 February 23"),
+  selectInput("x", "Select Date", choices = c("-1995 October 8", "-1994 March 6", "-1994 August 29", "-1993 February 23"),
+              selected = "-1993 February 23"),
   plotOutput("map", width = "500px", height = "400px"))
 )
 
 server <- function(input, output, session) {
   output$map <- renderPlot({
-    lunar %>%
-      filter(calendar_date == input$x) %>%
-      ggmap(map1) + 
-        geom_point(aes(longitude, latitude)) +
-        labs(x= "Longitude", y= "Latitude", title="Eclipse Locations")
+    new_lunar2 <- lunar %>%
+      filter(calendar_date == input$x)
+    ggmap(map) + 
+      geom_point(data=new_lunar2, aes(longitude_value, latitude_value), size=0.5) +
+      labs(x= "Longitude", y= "Latitude", title="Eclipse Locations")
       })
     }
 shinyApp(ui, server)
 ```
 
 - input for lunar vs solar
-- input for range of years
+- within solar, input for type of solar eclipse
+- make input for range of years
+- make input for user typing a specific year
 
 - output is a map of latitude and longitude for each eclipse, changing based on inputted year
