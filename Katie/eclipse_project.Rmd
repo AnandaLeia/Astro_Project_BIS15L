@@ -32,10 +32,10 @@ getwd()
 data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
 
 ```{r}
-solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
+solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L-main/NASA lunar and solar eclipses/solar.csv")
 ```
 ```{r}
-lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
+lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L-main/NASA lunar and solar eclipses/lunar.csv")
 ```
 
 
@@ -101,10 +101,10 @@ solar %>%
 
 ## Convert Catalog Number to a Numeric
 ```{r}
-solar$catalog_number <- as.numeric(solar$catalog_number)
+solar$catalog_number_num <- as.numeric(solar$catalog_number)
 ```
 ```{r}
-lunar$catalog_number <- as.numeric(lunar$catalog_number)
+lunar$catalog_number_num <- as.numeric(lunar$catalog_number)
 ```
 
 
@@ -151,7 +151,7 @@ ggmap(map_s)+
 ```
 ```{r}
 solar_filtered_dates1 <- solar %>% 
-  arrange(catalog_number) %>% 
+  arrange(catalog_number_num) %>% 
   head(n=10)
 ```
 ```{r}
@@ -160,7 +160,7 @@ ggmap(map_s)+
 ```
 ```{r}
 solar_filtered_dates2 <- solar %>% 
-  filter(catalog_number==1)
+  filter(catalog_number_num==1)
 ```
 ```{r}
 ggmap(map_s)+
@@ -168,7 +168,7 @@ ggmap(map_s)+
 ```
 ```{r}
 solar_filtered_dates3 <- solar %>% 
-  filter(catalog_number<=10 & catalog_number>=1)
+  filter(catalog_number_num<=10 & catalog_number_num>=1)
 ```
 ```{r}
 ggmap(map_s)+
@@ -208,12 +208,41 @@ lunar_filtered_type <- lunar %>%
 lunar_filtered_type 
 # only shows the total lunar eclipses
 ```
+```{r}
+lunar %>% 
+  filter(grepl("P", eclipse_type))
+# only shows partial lunar eclipses
+```
+```{r}
+lunar %>% 
+  filter(grepl("N", eclipse_type))
+# only shows penumbral lunar eclipses
+```
+
+
 
 ```{r}
 solar_filtered_type <- solar %>% 
   filter(eclipse_type=="T" | eclipse_type=="Ts" |eclipse_type=="Tm" | eclipse_type=="Tn" | eclipse_type=="T-" | eclipse_type=="T+")
 solar_filtered_type
+# total solar eclipses
 ```
+```{r}
+solar %>% 
+  filter(grepl("P", eclipse_type))
+# partial solar eclipses
+```
+```{r}
+solar %>% 
+  filter(grepl("A", eclipse_type))
+# annular solar eclipses
+```
+```{r}
+solar %>% 
+  filter(grepl("H", eclipse_type))
+# hybrid (annular/total) solar eclipses
+```
+
 
 
 
