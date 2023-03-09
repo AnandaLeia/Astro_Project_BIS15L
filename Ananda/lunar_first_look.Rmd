@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Import Lunar Eclipse Dataset and clean names:
 ```{r}
-lunar <- read_csv("solar_lunar_data/lunar.csv") %>% 
+lunar <- read_csv(("solar_lunar_data/lunar.csv"), na = ("-")) %>% 
   clean_names()
 ```
 Change Calendar Date Variable to Date Type
@@ -28,6 +28,4 @@ lunar_dates <- lunar %>%
          day = lubridate::day(date))
 lunar_dates
 ```
-```{r}
 
-```
