@@ -29,28 +29,197 @@ names(solar)
 install.packages("shinydashboard")
 library(shinydashboard)
 ```
+## Cleaning Names
 ```{r}
-lunar <- clean_names(lunar)
+solar_e <- janitor::clean_names(solar)
+```
+```{r}
+names(solar_e)
+```
+
+```{r}
+lunar_e <- janitor::clean_names(lunar)
+```
+```{r}
+names(lunar_e)
 ```
 
 
 
+## Converting Latitude and Longitude Coords
 ```{r}
-lunar <- lunar %>% 
+lunar <- lunar_e %>% 
   separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
   separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
   mutate(lat_num = as.numeric(lat)) %>% 
   mutate(long_num = as.numeric(long)) %>% 
   mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
   mutate(longitude_value = ifelse(EW=="E", long_num, -long_num)) 
+lunar %>%
+    select(latitude_value, longitude_value)
+```
+```{r}
+solar <- solar_e %>% 
+  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  mutate(lat_num = as.numeric(lat)) %>% 
+  mutate(long_num = as.numeric(long)) %>% 
+  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
+  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num))
+solar %>%
+    select(latitude_value, longitude_value)
+```
+
+## Convert Catalog Number to a Numeric
+```{r}
+solar$catalog_number_num <- as.numeric(solar$catalog_number)
+```
+```{r}
+lunar$catalog_number_num <- as.numeric(lunar$catalog_number)
+```
+
+
+
+```{r}
+naniar::miss_var_summary(solar)
+```
+```{r}
+naniar::miss_var_summary(lunar)
+```
+
+
+
+## Filtering by Eclipse Type
+```{r}
+lunar_filtered_type <- lunar %>% 
+  filter(eclipse_type=="T" | eclipse_type=="T+" |eclipse_type=="T-")
+lunar_filtered_type 
+# only shows the total lunar eclipses
+```
+```{r}
+lunar %>% 
+  filter(grepl("P", eclipse_type))
+# only shows partial lunar eclipses
+```
+```{r}
+lunar %>% 
+  filter(grepl("N", eclipse_type))
+# only shows penumbral lunar eclipses
+```
+
+
+
+```{r}
+solar_filtered_type <- solar %>% 
+  filter(eclipse_type=="T" | eclipse_type=="Ts" |eclipse_type=="Tm" | eclipse_type=="Tn" | eclipse_type=="T-" | eclipse_type=="T+")
+solar_filtered_type
+# total solar eclipses
+```
+```{r}
+solar %>% 
+  filter(grepl("P", eclipse_type))
+# partial solar eclipses
+```
+```{r}
+solar %>% 
+  filter(grepl("A", eclipse_type))
+# annular solar eclipses
+```
+```{r}
+solar %>% 
+  filter(grepl("H", eclipse_type))
+# hybrid (annular/total) solar eclipses
+```
+
+
+Change Calendar Date Variable to Date Type
+```{r}
+class("calendar_date")
+```
+
+```{r}
+lunar_dates <- lunar %>% 
+  filter(!grepl("^-", calendar_date)) %>% 
+  mutate(date = as.Date(calendar_date, format = "%Y %B %e")) %>% 
+  select(!c(calendar_date)) %>% 
+  mutate(year = lubridate::year(date),
+         month = lubridate::month(date),
+         day = lubridate::day(date))
+```
+```{r}
+solar_dates <- solar %>% 
+  filter(!grepl("^-", calendar_date)) %>% 
+  mutate(date = as.Date(calendar_date, format = "%Y %B %e")) %>% 
+  select(!c(calendar_date)) %>% 
+  mutate(year = lubridate::year(date),
+         month = lubridate::month(date),
+         day = lubridate::day(date))
 ```
 
 
 ```{r}
-## Visualizing What the Shiny App Will Display
-
-
+lat <- c(-80, 80)
+long <- c(-180, 180)
+bbox <- make_bbox(long, lat, f=0.05)
+map <- get_map(bbox, maptype = "toner-lite", source = "stamen")
 ```
+
+```{r}
+new_lunar <- lunar %>%
+  filter(catalog_number=="00001"|catalog_number=="00002"|catalog_number=="00003"|catalog_number=="00004")
+
+ggmap(map) + 
+    geom_point(data=new_lunar, aes(longitude_value, latitude_value), size=0.4) +
+    labs(x= "Longitude", y= "Latitude", title="Eclipse Locations")
+```
+
+```{r}
+ggmap(map) + 
+      geom_point(data=lunar, aes(longitude_value, latitude_value), size=0.04) +
+      labs(x= "Longitude", y= "Latitude", title="Eclipse Locations")
+```
+
+
+```{r}
+## Bare bones Dashboard shiny app 
+
+library(shiny)
+
+ui <- dashboardPage(
+  dashboardHeader(title = "Peak Viewing Locations for Eclipses"),
+  dashboardSidebar(title="Eclipse Selections", 
+                   textInput("x", "Select Year", "input a year from 0-3000"),
+                   selectInput("y", " Solar or Lunar Eclipses:", choices=c("Solar", "Lunar"))),
+  dashboardBody(plotOutput("map", width = "600px", height = "700px"))
+)
+
+server <- function(input, output, session) {
+  output$map <- renderPlot({
+    new_lunar2 <- lunar_dates %>%
+      filter(year == input$x)
+    new_solar2 <- solar_dates %>%
+      filter(year==input$x)
+    if (input$y == "Solar") {
+      ggmap(map) + 
+        geom_point(data=new_lunar2, aes(longitude_value, latitude_value), size=4) +
+        labs(x= "Longitude", y= "Latitude", title="Lunar Eclipse Locations")
+    } else {
+      ggmap(map) + 
+        geom_point(data=new_solar2, aes(longitude_value, latitude_value), size=4) + 
+        labs(x="Longitude", y="Latitude", title="Solar Eclipse Locations")
+      
+    }
+      })
+    }
+shinyApp(ui, server)
+```
+
+- input for lunar vs solar (DONE)
+- input for type of eclipse
+- make input for range of years
+- make input for user typing a specific year (DONE)
+
+
 
 
 ```{r}
@@ -84,59 +253,3 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 ```
 
-
-```{r}
-lat <- c(-80, 80)
-long <- c(-180, 180)
-bbox <- make_bbox(long, lat, f=0.05)
-map <- get_map(bbox, maptype = "terrain", source = "stamen")
-```
-
-```{r}
-new_lunar <- lunar %>%
-  filter(catalog_number=="00001"|catalog_number=="00002"|catalog_number=="00003"|catalog_number=="00004")
-
-ggmap(map) + 
-    geom_point(data=new_lunar, aes(longitude_value, latitude_value), size=0.4) +
-    labs(x= "Longitude", y= "Latitude", title="Eclipse Locations")
-```
-
-```{r}
-ggmap(map) + 
-      geom_point(data=lunar, aes(longitude_value, latitude_value), size=0.04) +
-      labs(x= "Longitude", y= "Latitude", title="Eclipse Locations")
-```
-
-
-```{r}
-## Bare bones Dashboard shiny app 
-
-library(shiny)
-
-ui <- dashboardPage(
-  dashboardHeader(title = "Eclipses"),
-  dashboardSidebar(title="Catalog Number"),
-  dashboardBody(
-  selectInput("x", "Select Date", choices = c("-1995 October 8", "-1994 March 6", "-1994 August 29", "-1993 February 23"),
-              selected = "-1993 February 23"),
-  plotOutput("map", width = "500px", height = "400px"))
-)
-
-server <- function(input, output, session) {
-  output$map <- renderPlot({
-    new_lunar2 <- lunar %>%
-      filter(calendar_date == input$x)
-    ggmap(map) + 
-      geom_point(data=new_lunar2, aes(longitude_value, latitude_value), size=0.5) +
-      labs(x= "Longitude", y= "Latitude", title="Eclipse Locations")
-      })
-    }
-shinyApp(ui, server)
-```
-
-- input for lunar vs solar
-- within solar, input for type of solar eclipse
-- make input for range of years
-- make input for user typing a specific year
-
-- output is a map of latitude and longitude for each eclipse, changing based on inputted year
