@@ -31,10 +31,10 @@ data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
 
 *Remember to change the path for loading the data between people*
 ```{r}
-solar_eclipse <- read_csv("/Users/aleia/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
+solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
 ```
 ```{r}
-lunar_eclipse <- read_csv("/Users/aleia/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
+lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
 ```
 
 
@@ -65,29 +65,6 @@ names(lunar_e)
 
 
 
-## Converting Latitude and Longitude Coords
-```{r}
-lunar <- lunar_e %>% 
-  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
-  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
-  mutate(lat_num = as.numeric(lat)) %>% 
-  mutate(long_num = as.numeric(long)) %>% 
-  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
-  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num)) 
-lunar %>%
-    select(latitude_value, longitude_value)
-```
-```{r}
-solar <- solar_e %>% 
-  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
-  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
-  mutate(lat_num = as.numeric(lat)) %>% 
-  mutate(long_num = as.numeric(long)) %>% 
-  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
-  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num))
-solar %>%
-    select(latitude_value, longitude_value)
-```
 
 ##Converting Dates: to date type data format, individual year, month, day variables
 ```{r}
@@ -109,6 +86,32 @@ lunar_dates <- lunar_e %>%
          month = lubridate::month(date),
          day = lubridate::day(date))
 lunar_dates
+```
+
+
+
+## Converting Latitude and Longitude Coords
+```{r}
+lunar <- lunar_dates %>% 
+  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  mutate(lat_num = as.numeric(lat)) %>% 
+  mutate(long_num = as.numeric(long)) %>% 
+  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
+  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num)) 
+lunar %>%
+    select(latitude_value, longitude_value)
+```
+```{r}
+solar <- solar_dates %>% 
+  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  mutate(lat_num = as.numeric(lat)) %>% 
+  mutate(long_num = as.numeric(long)) %>% 
+  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
+  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num))
+solar %>%
+    select(latitude_value, longitude_value)
 ```
 
 
