@@ -248,35 +248,45 @@ solar %>%
 
 
 
+## Other Data Explorations
 
-
-## App Framework
 
 ```{r}
-library(shiny)
+solar %>% 
+  ggplot(aes(x=eclipse_type))+
+  geom_bar()
+```
 
-ui <- fluidPage(
-  titlePanel("Solar and Lunar Eclipses"),
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("solar_or_lunar", " Solar or Lunar Eclipses:", choices=c("Solar", "Lunar"), 
-                  helpText("Reference: ")),
-      mainPanel(
-        plotOutput("plot"))
-      )
-  )
-)
+```{r}
+solar %>% 
+  mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
+                                        grepl("H", eclipse_type) ~ "H",
+                                        grepl("P", eclipse_type) ~ "P",
+                                        grepl("T", eclipse_type) ~ "T")) %>% 
+  ggplot(aes(x=eclipse_type_broad))+
+  geom_bar()+
+  labs(title="Proportions of Solar Eclipse Types",
+       x="Solar Eclipse Type",
+       y="Count")
+```
 
-server <- function(input, output, session) {
-  plotOutput$plot <- renderPlot({
-      filter(taxon=input$x)
-      ggplot(data=homerange, aes_string(x=log10.hra))+
-      geom_density()
-  })
-  
-}
 
-shinyApp(ui, server)
+
+```{r}
+lunar %>% 
+  ggplot(aes(x=eclipse_type))+
+  geom_bar()
+```
+```{r}
+lunar %>% 
+  mutate(eclipse_type_broad = case_when(grepl("N", eclipse_type) ~ "N",
+                                        grepl("P", eclipse_type) ~ "P",
+                                        grepl("T", eclipse_type) ~ "T")) %>% 
+  ggplot(aes(x=eclipse_type_broad))+
+  geom_bar()+
+  labs(title="Proportions of Lunar Eclipse Types",
+       x="Lunar Eclipse Type",
+       y="Count")
 ```
 
 

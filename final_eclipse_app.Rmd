@@ -125,3 +125,17 @@ solar %>%
 
 
 
+
+
+
+
+
+## How to create a new categorical variable using case_when
+
+```{r}
+homerange <- homerange %>% 
+             mutate(mass_category = case_when(log10_mass <= 1.75 ~ "small",
+                                              log10_mass > 1.75 & log10_mass <= 2.75 ~ "medium",
+                                              log10_mass > 2.75 ~ "large"))
+#creates a new categorical variable based off of values from an existing variable
+```
