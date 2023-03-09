@@ -1,0 +1,95 @@
+---
+title: "final_eclipse_app"
+output: html_document
+date: "2023-03-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(skimr)
+library(naniar)
+library(here)
+library(gtools)
+library(RColorBrewer)
+library(paletteer)
+library(ggthemes)
+library(shiny)
+library(shinydashboard)
+library(ggmap)
+```
+
+
+## Loading the Data
+
+data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
+
+*Remember to change the path for loading the data between people*
+```{r}
+solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
+```
+```{r}
+lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
+```
+
+
+## Variable Meanings:
+
+#### Key to Catalog of Lunar Eclipses:
+https://eclipse.gsfc.nasa.gov/LEcat5/LEcatkey.html
+
+##### Key to Catalog of Solar Eclipses:
+https://eclipse.gsfc.nasa.gov/SEcat5/SEcatkey.html
+
+
+
+## Cleaning Names
+```{r}
+solar_e <- janitor::clean_names(solar_eclipse)
+```
+```{r}
+names(solar_e)
+```
+
+```{r}
+lunar_e <- janitor::clean_names(lunar_eclipse)
+```
+```{r}
+names(lunar_e)
+```
+
+
+
+## Converting Latitude and Longitude Coords
+```{r}
+lunar <- lunar_e %>% 
+  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  mutate(lat_num = as.numeric(lat)) %>% 
+  mutate(long_num = as.numeric(long)) %>% 
+  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
+  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num)) 
+lunar %>%
+    select(latitude_value, longitude_value)
+```
+```{r}
+solar <- solar_e %>% 
+  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
+  mutate(lat_num = as.numeric(lat)) %>% 
+  mutate(long_num = as.numeric(long)) %>% 
+  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
+  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num))
+solar %>%
+    select(latitude_value, longitude_value)
+```
+
+
+
+
+

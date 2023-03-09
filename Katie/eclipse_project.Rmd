@@ -32,10 +32,10 @@ getwd()
 data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
 
 ```{r}
-solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L-main/NASA lunar and solar eclipses/solar.csv")
+solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
 ```
 ```{r}
-lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L-main/NASA lunar and solar eclipses/lunar.csv")
+lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
 ```
 
 
