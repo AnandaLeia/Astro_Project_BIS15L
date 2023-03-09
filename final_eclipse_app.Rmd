@@ -31,10 +31,10 @@ data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
 
 *Remember to change the path for loading the data between people*
 ```{r}
-solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
+solar_eclipse <- read_csv("/Users/aleia/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
 ```
 ```{r}
-lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
+lunar_eclipse <- read_csv("/Users/aleia/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
 ```
 
 
@@ -89,7 +89,27 @@ solar %>%
     select(latitude_value, longitude_value)
 ```
 
-
+##Converting Dates: to date type data format, individual year, month, day variables
+```{r}
+solar_dates <- solar_e %>% 
+  filter(!grepl("^-", calendar_date)) %>% 
+  mutate(date = as.Date(calendar_date, format = "%Y %B %e")) %>% 
+  select(!c(calendar_date)) %>% 
+  mutate(year = lubridate::year(date),
+         month = lubridate::month(date),
+         day = lubridate::day(date))
+solar_dates
+```
+```{r}
+lunar_dates <- lunar_e %>% 
+  filter(!grepl("^-", calendar_date)) %>% 
+  mutate(date = as.Date(calendar_date, format = "%Y %B %e")) %>% 
+  select(!c(calendar_date)) %>% 
+  mutate(year = lubridate::year(date),
+         month = lubridate::month(date),
+         day = lubridate::day(date))
+lunar_dates
+```
 
 
 

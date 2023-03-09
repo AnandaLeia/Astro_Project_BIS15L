@@ -44,6 +44,19 @@ solar_dates %>%
   ggplot(aes(x=year))+
   geom_bar()
 ```
+```{r}
+library(shiny)
+
+ui <- fluidPage(
+  selectInput()
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
 
 https://sscc.wisc.edu/sscc/pubs/dwr/dates.html
 http://jenrichmond.rbind.io/post/converting-characters-to-dates/
