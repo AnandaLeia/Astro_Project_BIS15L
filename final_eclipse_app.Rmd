@@ -30,11 +30,14 @@ library(ggmap)
 data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
 
 *Remember to change the path for loading the data between people*
+## ksricket aleia
 ```{r}
-solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv")
+solar_eclipse <- read_csv("/Users/aleia/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv") %>% 
+  clean_names()
 ```
 ```{r}
-lunar_eclipse <- read_csv(("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv"), na =("-"))
+lunar_eclipse <- read_csv(("/Users/aleia/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv"), na =("-")) %>% 
+  clean_names()
 ```
 
 
@@ -57,27 +60,10 @@ https://eclipse.gsfc.nasa.gov/SEcat5/SEcatkey.html
 
 
 
-## Cleaning Names
-```{r}
-solar_e <- janitor::clean_names(solar_eclipse)
-```
-```{r}
-names(solar_e)
-```
-
-```{r}
-lunar_e <- janitor::clean_names(lunar_eclipse)
-```
-```{r}
-names(lunar_e)
-```
-
-
-
 
 ##Converting Dates: to date type data format, individual year, month, day variables
 ```{r}
-solar_dates <- solar_e %>% 
+solar_dates <- solar_eclipse %>% 
   filter(!grepl("^-", calendar_date)) %>% 
   mutate(date = as.Date(calendar_date, format = "%Y %B %e")) %>% 
   select(!c(calendar_date)) %>% 
@@ -87,7 +73,7 @@ solar_dates <- solar_e %>%
 solar_dates
 ```
 ```{r}
-lunar_dates <- lunar_e %>% 
+lunar_dates <- lunar_eclipse %>% 
   filter(!grepl("^-", calendar_date)) %>% 
   mutate(date = as.Date(calendar_date, format = "%Y %B %e")) %>% 
   select(!c(calendar_date)) %>% 
@@ -123,15 +109,56 @@ solar %>%
     select(latitude_value, longitude_value)
 ```
 
+##Creating Column Century (as numeric)
+```{r}
+solar_cent <- solar %>% 
+  mutate(century_char = case_when(year >= 0 & year <100 ~ "1",
+                                  year >= 100 & year <200 ~ "2",
+                                  year >= 200 & year <300 ~ "3",
+                                  year >= 300 & year <400 ~ "4",
+                                  year >= 400 & year <500 ~ "5",
+                                  year >= 500 & year <600 ~ "6",
+                                  year >= 600 & year <700 ~ "7",
+                                  year >= 700 & year <800 ~ "8",
+                                  year >= 800 & year <900 ~ "9",
+                                  year >= 900 & year <1000 ~ "10",
+                                  year >= 1000 & year <1100 ~ "11",
+                                  year >= 1100 & year <1200 ~ "12",
+                                  year >= 1200 & year <1300 ~ "13",
+                                  year >= 1300 & year <1400 ~ "14",
+                                  year >= 1400 & year <1500 ~ "15",
+                                  year >= 1500 & year <1600 ~ "16",
+                                  year >= 1600 & year <1700 ~ "17",
+                                  year >= 1700 & year <1800 ~ "18",
+                                  year >= 1800 & year <1900 ~ "19",
+                                  year >= 1900 & year <2000 ~ "20",
+                                  year >= 2000 & year <2100 ~ "21",
+                                  year >= 2100 & year <2200 ~ "22",
+                                  year >= 2200 & year <2300 ~ "23",
+                                  year >= 2300 & year <2400 ~ "24",
+                                  year >= 2400 & year <2500 ~ "25",
+                                  year >= 2500 & year <2600 ~ "26",
+                                  year >= 2600 & year <2700 ~ "27",
+                                  year >= 2700 & year <2800 ~ "28",
+                                  year >= 2800 & year <2900 ~ "29",
+                                  year >= 2900 & year <3000 ~ "30"))
+solar_cent
+```
 
+```{r}
+solar_cent$century = as.numeric(solar_cent$century_char)
+```
 
-
+```{r}
+solar_cent %>% 
+  ggplot(aes(x = century, fill = eclipse_type))+
+  geom_bar()
+```
 
 
 
 
 ## How to create a new categorical variable using case_when
-
 ```{r}
 homerange <- homerange %>% 
              mutate(mass_category = case_when(log10_mass <= 1.75 ~ "small",
