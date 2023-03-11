@@ -156,6 +156,15 @@ solar_cent %>%
   ggplot(aes(x = century, fill = eclipse_type))+
   geom_bar()
 ```
+```{r}
+solar_cent %>% 
+  mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
+                                        grepl("H", eclipse_type) ~ "H",
+                                        grepl("P", eclipse_type) ~ "P",
+                                        grepl("T", eclipse_type) ~ "T")) %>%
+  ggplot(aes(x = century, fill = eclipse_type_broad))+
+  geom_bar()
+```
 
 
 
