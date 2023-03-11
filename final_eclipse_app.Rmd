@@ -30,13 +30,15 @@ library(ggmap)
 data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
 
 *Remember to change the path for loading the data between people*
-## ksricket aleia
 ```{r}
-solar_eclipse <- read_csv("/Users/aleia/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv") %>% 
+getwd()
+```
+```{r}
+solar_eclipse <- read_csv("/Users/katiericketts/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv") %>% 
   clean_names()
 ```
 ```{r}
-lunar_eclipse <- read_csv(("/Users/aleia/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv"), na =("-")) %>% 
+lunar_eclipse <- read_csv(("/Users/katiericketts/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv"), na =("-")) %>% 
   clean_names()
 ```
 
@@ -166,6 +168,13 @@ homerange <- homerange %>%
                                               log10_mass > 2.75 ~ "large"))
 #creates a new categorical variable based off of values from an existing variable
 ```
+
+
+```{r}
+lunar %>% 
+  select(date, year, month, day)
+```
+
 
 
 
