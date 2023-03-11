@@ -185,8 +185,7 @@ lunar %>%
 ```
 
 
-
-
+## Making the map
 
 ```{r}
 lat <- c(-80, 80)
@@ -194,10 +193,10 @@ long <- c(-180, 180)
 bbox <- make_bbox(long, lat, f=0.05)
 map <- get_map(bbox, maptype = "toner-lite", source = "stamen")
 ```
-
+## Bare bones Dashboard shiny app
 
 ```{r}
-## Bare bones Dashboard shiny app (Date range doesn't work yet, but if you change it to selectInput and have the user input a year it does work)
+## (Date range doesn't work yet, but if you change it to selectInput and have the user input a year it does work)
 
 library(shiny)
 
@@ -219,19 +218,19 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) {
   output$map <- renderPlot({
-    new_lunar2 <- lunar_dates %>%
+    app_lunar <- lunar %>%
       filter(date == input$x)
-    new_solar2 <- solar_dates %>%
+    app_solar <- solar %>%
       filter(date==input$x)
     # Defining Solar Eclipse Sub-types 
-    annular_solar <- new_solar2 %>% filter(grepl("A", eclipse_type))
-    partial_solar <- new_solar2 %>% filter(grepl("P", eclipse_type))
-    total_solar <- new_solar2 %>% filter(eclipse_type=="T" | eclipse_type=="Ts" |eclipse_type=="Tm" | eclipse_type=="Tn" | eclipse_type=="T-" | eclipse_type=="T+")
-    hybrid_solar <- new_solar2 %>% filter(grepl("H", eclipse_type))
+    annular_solar <- app_solar %>% filter(grepl("A", eclipse_type))
+    partial_solar <- app_solar %>% filter(grepl("P", eclipse_type))
+    total_solar <- app_solar %>% filter(eclipse_type=="T" | eclipse_type=="Ts" |eclipse_type=="Tm" | eclipse_type=="Tn" | eclipse_type=="T-" | eclipse_type=="T+")
+    hybrid_solar <- app_solar %>% filter(grepl("H", eclipse_type))
     # Defining Lunar Eclipse Sub-types
-    total_lunar <- new_lunar2 %>% filter(eclipse_type=="T" | eclipse_type=="T+" | eclipse_type=="T-")
-    penumbral_lunar <- new_lunar2 %>% filter(grepl("N", eclipse_type))
-    partial_lunar <- new_lunar2 %>% filter(grepl("P", eclipse_type))
+    total_lunar <- app_lunar %>% filter(eclipse_type=="T" | eclipse_type=="T+" | eclipse_type=="T-")
+    penumbral_lunar <- app_lunar %>% filter(grepl("N", eclipse_type))
+    partial_lunar <- app_lunar %>% filter(grepl("P", eclipse_type))
     if (input$y == "Lunar") {
       if (input$a == "Total") {
         ggmap(map) + 
@@ -249,7 +248,7 @@ server <- function(input, output, session) {
         labs(x= "Longitude", y= "Latitude", title="Penumbral Lunar Eclipse Locations")
       } else {
         ggmap(map) + 
-        geom_point(data=new_lunar2, aes(longitude_value, latitude_value, color=month), size=4) +
+        geom_point(data=app_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
         labs(x= "Longitude", y= "Latitude", title="All Lunar Eclipse Locations")
       }
     } else {
@@ -274,7 +273,7 @@ server <- function(input, output, session) {
           labs(x= "Longitude", y= "Latitude", title="Hybrid Solar Eclipse Locations")
         } else {
           ggmap(map) + 
-          geom_point(data=new_solar2, aes(longitude_value, latitude_value, color=month), size=4) +
+          geom_point(data=app_solar, aes(longitude_value, latitude_value, color=month), size=4) +
           labs(x= "Longitude", y= "Latitude", title="All Solar Eclipse Locations")
         }
       
