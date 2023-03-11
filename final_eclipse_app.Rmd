@@ -196,14 +196,12 @@ map <- get_map(bbox, maptype = "toner-lite", source = "stamen")
 ## Bare bones Dashboard shiny app
 
 ```{r}
-## (Date range doesn't work yet, but if you change it to selectInput and have the user input a year it does work)
-
 library(shiny)
 
 ui <- dashboardPage(
   dashboardHeader(title = "Peak Viewing Locations for Eclipses"),
   dashboardSidebar(title="Eclipse Selections", 
-                   dateRangeInput("x", "Select Year", format = "yyyy"),
+                   textInput("x", "Year", placeholder = "Type in a Year from 0-3000"),
                    selectInput("y", "Solar or Lunar Eclipses:", choices=c("Solar", "Lunar"), selected = "Solar"),
                    conditionalPanel(condition = "input.y == 'Solar'", radioButtons(
                      "z", label = "Which Type of Solar Eclipse", choices = c("Total", "Partial", "Annular", "Hybrid", "All Types"), selected = "All Types")
@@ -219,9 +217,9 @@ ui <- dashboardPage(
 server <- function(input, output, session) {
   output$map <- renderPlot({
     app_lunar <- lunar %>%
-      filter(date == input$x)
+      filter(year == input$x)
     app_solar <- solar %>%
-      filter(date==input$x)
+      filter(year==input$x)
     # Defining Solar Eclipse Sub-types 
     annular_solar <- app_solar %>% filter(grepl("A", eclipse_type))
     partial_solar <- app_solar %>% filter(grepl("P", eclipse_type))
