@@ -166,3 +166,103 @@ homerange <- homerange %>%
                                               log10_mass > 2.75 ~ "large"))
 #creates a new categorical variable based off of values from an existing variable
 ```
+
+
+
+
+```{r}
+lat <- c(-80, 80)
+long <- c(-180, 180)
+bbox <- make_bbox(long, lat, f=0.05)
+map <- get_map(bbox, maptype = "toner-lite", source = "stamen")
+```
+
+
+```{r}
+## Bare bones Dashboard shiny app (Date range doesn't work yet, but if you change it to selectInput and have the user input a year it does work)
+
+library(shiny)
+
+ui <- dashboardPage(
+  dashboardHeader(title = "Peak Viewing Locations for Eclipses"),
+  dashboardSidebar(title="Eclipse Selections", 
+                   dateRangeInput("x", "Select Year", format = "yyyy"),
+                   selectInput("y", "Solar or Lunar Eclipses:", choices=c("Solar", "Lunar"), selected = "Solar"),
+                   conditionalPanel(condition = "input.y == 'Solar'", radioButtons(
+                     "z", label = "Which Type of Solar Eclipse", choices = c("Total", "Partial", "Annular", "Hybrid", "All Types"), selected = "All Types")
+                    ),
+                   conditionalPanel(condition = "input.y == 'Lunar'", radioButtons(
+                     "a", label="Which Type of Lunar Eclipse", choices = c("Total", "Penumbral", "Partial", "All Types"), selected = "All Types")
+                   )
+                   ),
+  dashboardBody(plotOutput("map", width = "600px", height = "700px"))
+  
+)
+
+server <- function(input, output, session) {
+  output$map <- renderPlot({
+    new_lunar2 <- lunar_dates %>%
+      filter(date == input$x)
+    new_solar2 <- solar_dates %>%
+      filter(date==input$x)
+    # Defining Solar Eclipse Sub-types 
+    annular_solar <- new_solar2 %>% filter(grepl("A", eclipse_type))
+    partial_solar <- new_solar2 %>% filter(grepl("P", eclipse_type))
+    total_solar <- new_solar2 %>% filter(eclipse_type=="T" | eclipse_type=="Ts" |eclipse_type=="Tm" | eclipse_type=="Tn" | eclipse_type=="T-" | eclipse_type=="T+")
+    hybrid_solar <- new_solar2 %>% filter(grepl("H", eclipse_type))
+    # Defining Lunar Eclipse Sub-types
+    total_lunar <- new_lunar2 %>% filter(eclipse_type=="T" | eclipse_type=="T+" | eclipse_type=="T-")
+    penumbral_lunar <- new_lunar2 %>% filter(grepl("N", eclipse_type))
+    partial_lunar <- new_lunar2 %>% filter(grepl("P", eclipse_type))
+    if (input$y == "Lunar") {
+      if (input$a == "Total") {
+        ggmap(map) + 
+        geom_point(data=total_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
+        labs(x= "Longitude", y= "Latitude", title="Total Lunar Eclipse Locations")
+      }
+      else if (input$a == "Partial") {
+        ggmap(map) + 
+        geom_point(data=partial_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
+        labs(x= "Longitude", y= "Latitude", title="Partial Lunar Eclipse Locations")
+      }
+      else if (input$a == "Penumbral") {
+        ggmap(map) + 
+        geom_point(data=penumbral_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
+        labs(x= "Longitude", y= "Latitude", title="Penumbral Lunar Eclipse Locations")
+      } else {
+        ggmap(map) + 
+        geom_point(data=new_lunar2, aes(longitude_value, latitude_value, color=month), size=4) +
+        labs(x= "Longitude", y= "Latitude", title="All Lunar Eclipse Locations")
+      }
+    } else {
+        if (input$z == "Annular") {
+          ggmap(map) +
+            geom_point(data=annular_solar, aes(longitude_value, latitude_value, color=month), size=4) +
+            labs(x="Longitude", y="Latitude", title="Annular Solar Eclipse Locations")
+        }
+        else if (input$z == "Total") {
+          ggmap(map) + 
+          geom_point(data=total_solar, aes(longitude_value, latitude_value, color=month), size=4) +
+          labs(x= "Longitude", y= "Latitude", title="Total Solar Eclipse Locations")
+        }
+        else if (input$z == "Partial") {
+          ggmap(map) + 
+          geom_point(data=partial_solar, aes(longitude_value, latitude_value, color=month), size=4) +
+          labs(x= "Longitude", y= "Latitude", title="Partial Solar Eclipse Locations")
+        }
+        else if (input$z == "Hybrid") {
+          ggmap(map) + 
+          geom_point(data=hybrid_solar, aes(longitude_value, latitude_value, color=month), size=4) +
+          labs(x= "Longitude", y= "Latitude", title="Hybrid Solar Eclipse Locations")
+        } else {
+          ggmap(map) + 
+          geom_point(data=new_solar2, aes(longitude_value, latitude_value, color=month), size=4) +
+          labs(x= "Longitude", y= "Latitude", title="All Solar Eclipse Locations")
+        }
+      
+    }
+      })
+    }
+shinyApp(ui, server)
+```
+
