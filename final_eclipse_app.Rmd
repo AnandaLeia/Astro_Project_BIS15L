@@ -111,78 +111,6 @@ solar %>%
     select(latitude_value, longitude_value)
 ```
 
-##Creating Column Century (as numeric)
-```{r}
-solar_cent <- solar %>% 
-  mutate(century_char = case_when(year >= 0 & year <100 ~ "1",
-                                  year >= 100 & year <200 ~ "2",
-                                  year >= 200 & year <300 ~ "3",
-                                  year >= 300 & year <400 ~ "4",
-                                  year >= 400 & year <500 ~ "5",
-                                  year >= 500 & year <600 ~ "6",
-                                  year >= 600 & year <700 ~ "7",
-                                  year >= 700 & year <800 ~ "8",
-                                  year >= 800 & year <900 ~ "9",
-                                  year >= 900 & year <1000 ~ "10",
-                                  year >= 1000 & year <1100 ~ "11",
-                                  year >= 1100 & year <1200 ~ "12",
-                                  year >= 1200 & year <1300 ~ "13",
-                                  year >= 1300 & year <1400 ~ "14",
-                                  year >= 1400 & year <1500 ~ "15",
-                                  year >= 1500 & year <1600 ~ "16",
-                                  year >= 1600 & year <1700 ~ "17",
-                                  year >= 1700 & year <1800 ~ "18",
-                                  year >= 1800 & year <1900 ~ "19",
-                                  year >= 1900 & year <2000 ~ "20",
-                                  year >= 2000 & year <2100 ~ "21",
-                                  year >= 2100 & year <2200 ~ "22",
-                                  year >= 2200 & year <2300 ~ "23",
-                                  year >= 2300 & year <2400 ~ "24",
-                                  year >= 2400 & year <2500 ~ "25",
-                                  year >= 2500 & year <2600 ~ "26",
-                                  year >= 2600 & year <2700 ~ "27",
-                                  year >= 2700 & year <2800 ~ "28",
-                                  year >= 2800 & year <2900 ~ "29",
-                                  year >= 2900 & year <3000 ~ "30"))
-solar_cent
-```
-
-```{r}
-solar_cent$century = as.numeric(solar_cent$century_char)
-```
-
-```{r}
-solar_cent %>% 
-  ggplot(aes(x = century, fill = eclipse_type))+
-  geom_bar()
-```
-```{r}
-solar_cent %>% 
-  mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
-                                        grepl("H", eclipse_type) ~ "H",
-                                        grepl("P", eclipse_type) ~ "P",
-                                        grepl("T", eclipse_type) ~ "T")) %>%
-  ggplot(aes(x = century, fill = eclipse_type_broad))+
-  geom_bar()
-```
-
-
-
-
-## How to create a new categorical variable using case_when
-```{r}
-homerange <- homerange %>% 
-             mutate(mass_category = case_when(log10_mass <= 1.75 ~ "small",
-                                              log10_mass > 1.75 & log10_mass <= 2.75 ~ "medium",
-                                              log10_mass > 2.75 ~ "large"))
-#creates a new categorical variable based off of values from an existing variable
-```
-
-
-```{r}
-lunar %>% 
-  select(date, year, month, day)
-```
 
 
 ## Making the map
@@ -193,6 +121,7 @@ long <- c(-180, 180)
 bbox <- make_bbox(long, lat, f=0.05)
 map <- get_map(bbox, maptype = "toner-lite", source = "stamen")
 ```
+
 ## Bare bones Dashboard shiny app
 
 ```{r}
@@ -280,4 +209,98 @@ server <- function(input, output, session) {
     }
 shinyApp(ui, server)
 ```
+
+
+
+# Other Data Analysis (For Presentation)
+
+## Eclipse Types by Century
+
+#### Creating Column Century (as numeric)
+```{r}
+solar_cent <- solar %>% 
+  mutate(century_char = case_when(year >= 0 & year <100 ~ "1",
+                                  year >= 100 & year <200 ~ "2",
+                                  year >= 200 & year <300 ~ "3",
+                                  year >= 300 & year <400 ~ "4",
+                                  year >= 400 & year <500 ~ "5",
+                                  year >= 500 & year <600 ~ "6",
+                                  year >= 600 & year <700 ~ "7",
+                                  year >= 700 & year <800 ~ "8",
+                                  year >= 800 & year <900 ~ "9",
+                                  year >= 900 & year <1000 ~ "10",
+                                  year >= 1000 & year <1100 ~ "11",
+                                  year >= 1100 & year <1200 ~ "12",
+                                  year >= 1200 & year <1300 ~ "13",
+                                  year >= 1300 & year <1400 ~ "14",
+                                  year >= 1400 & year <1500 ~ "15",
+                                  year >= 1500 & year <1600 ~ "16",
+                                  year >= 1600 & year <1700 ~ "17",
+                                  year >= 1700 & year <1800 ~ "18",
+                                  year >= 1800 & year <1900 ~ "19",
+                                  year >= 1900 & year <2000 ~ "20",
+                                  year >= 2000 & year <2100 ~ "21",
+                                  year >= 2100 & year <2200 ~ "22",
+                                  year >= 2200 & year <2300 ~ "23",
+                                  year >= 2300 & year <2400 ~ "24",
+                                  year >= 2400 & year <2500 ~ "25",
+                                  year >= 2500 & year <2600 ~ "26",
+                                  year >= 2600 & year <2700 ~ "27",
+                                  year >= 2700 & year <2800 ~ "28",
+                                  year >= 2800 & year <2900 ~ "29",
+                                  year >= 2900 & year <3000 ~ "30"))
+solar_cent
+```
+```{r}
+solar_cent$century = as.numeric(solar_cent$century_char)
+```
+
+#### Building the plot
+```{r}
+solar_cent %>% 
+  ggplot(aes(x = century, fill = eclipse_type))+
+  geom_bar()
+```
+#### Group the eclipse types by broader category
+```{r}
+solar_cent %>% 
+  mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
+                                        grepl("H", eclipse_type) ~ "H",
+                                        grepl("P", eclipse_type) ~ "P",
+                                        grepl("T", eclipse_type) ~ "T")) %>%
+  ggplot(aes(x = century, fill = eclipse_type_broad))+
+  geom_bar()
+```
+
+## Proportions of Eclipse Types
+```{r}
+solar %>% 
+  mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
+                                        grepl("H", eclipse_type) ~ "H",
+                                        grepl("P", eclipse_type) ~ "P",
+                                        grepl("T", eclipse_type) ~ "T")) %>% 
+  ggplot(aes(x=eclipse_type_broad, fill=eclipse_type_broad))+
+  geom_bar()+
+  labs(title="Proportions of Solar Eclipse Types",
+       x="Solar Eclipse Type",
+       y="Count",
+       fill="Solar Eclipse Type")+
+  scale_fill_discrete(name = "Solar Eclipse Type", labels = c("Annular", "Hybrid (Annular and Total)", "Partial", "Total"))
+```
+```{r}
+lunar %>% 
+  mutate(eclipse_type_broad = case_when(grepl("N", eclipse_type) ~ "N",
+                                        grepl("P", eclipse_type) ~ "P",
+                                        grepl("T", eclipse_type) ~ "T")) %>% 
+  ggplot(aes(x=eclipse_type_broad, fill=eclipse_type_broad))+
+  geom_bar()+
+  labs(title="Proportions of Lunar Eclipse Types",
+       x="Lunar Eclipse Type",
+       y="Count",
+       fill="Lunar Eclipse Type")+
+  scale_fill_discrete(name = "Lunar Eclipse Type", labels = c("Penumbral", "Partial", "Total"))
+```
+
+
+
 
