@@ -99,7 +99,8 @@ solar %>%
     select(latitude_value, longitude_value)
 ```
 
-## Convert Catalog Number to a Numeric
+## Convert Catalog Number to a Numeric 
+(so that I can filter by catalog number later on as a test for mapping)
 ```{r}
 solar$catalog_number_num <- as.numeric(solar$catalog_number)
 ```
@@ -189,9 +190,7 @@ https://www.rebeccabarter.com/blog/2017-11-17-ggplot2_tutorial/
 
 
 
-
-
-
+## NA Summaries
 ```{r}
 naniar::miss_var_summary(solar)
 ```
@@ -218,7 +217,6 @@ lunar %>%
   filter(grepl("N", eclipse_type))
 # only shows penumbral lunar eclipses
 ```
-
 
 
 ```{r}
@@ -248,15 +246,14 @@ solar %>%
 
 
 
-## Other Data Explorations
-
-
+## Plots of Eclipse Type Proprtions
 ```{r}
 solar %>% 
   ggplot(aes(x=eclipse_type))+
   geom_bar()
 ```
 
+creating broad categories of eclipse types for more cohesive plots:
 ```{r}
 solar %>% 
   mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
