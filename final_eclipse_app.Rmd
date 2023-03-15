@@ -29,6 +29,15 @@ library(ggmap)
 
 data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
 
+## Variable Meanings:
+
+#### Key to Catalog of Lunar Eclipses:
+https://eclipse.gsfc.nasa.gov/LEcat5/LEcatkey.html
+
+#### Key to Catalog of Solar Eclipses:
+https://eclipse.gsfc.nasa.gov/SEcat5/SEcatkey.html
+
+
 *Remember to change the path for loading the data between people*
 ```{r}
 getwd()
@@ -50,18 +59,6 @@ naniar::miss_var_summary(solar_eclipse)
 ```{r}
 naniar::miss_var_summary(lunar_eclipse)
 ```
-
-
-## Variable Meanings:
-
-#### Key to Catalog of Lunar Eclipses:
-https://eclipse.gsfc.nasa.gov/LEcat5/LEcatkey.html
-
-##### Key to Catalog of Solar Eclipses:
-https://eclipse.gsfc.nasa.gov/SEcat5/SEcatkey.html
-
-
-
 
 ##Converting Dates: to date type data format, individual year, month, day variables
 ```{r}
@@ -144,6 +141,7 @@ ui <- dashboardPage(
 )
 
 server <- function(input, output, session) {
+  session$onSessionEnded(stopApp)
   output$map <- renderPlot({
     app_lunar <- lunar %>%
       filter(year == input$x)
