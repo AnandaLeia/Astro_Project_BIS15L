@@ -38,6 +38,11 @@ solar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lun
 lunar_eclipse <- read_csv("/Users/ksricket/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv")
 ```
 
+```{r}
+solar_eclipse <- read_csv(here("NASA lunar and solar eclipses", "solar.csv"))
+```
+
+
 
 ## Cleaning Names
 ```{r}
