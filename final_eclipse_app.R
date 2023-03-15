@@ -109,46 +109,64 @@ server <- function(input, output, session) {
       if (input$a == "Total") {
         ggmap(map) + 
           geom_point(data=total_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Total Lunar Eclipse Locations")
+          labs(x= "Longitude", y= "Latitude", title="Total Lunar Eclipse Locations")+
+          theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
+          theme(axis.title = element_text(size=rel(1.5)))
       }
       else if (input$a == "Partial") {
         ggmap(map) + 
           geom_point(data=partial_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Partial Lunar Eclipse Locations")
+          labs(x= "Longitude", y= "Latitude", title="Partial Lunar Eclipse Locations")+
+          theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
+          theme(axis.title = element_text(size=rel(1.5)))
       }
       else if (input$a == "Penumbral") {
         ggmap(map) + 
           geom_point(data=penumbral_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Penumbral Lunar Eclipse Locations")
+          labs(x= "Longitude", y= "Latitude", title="Penumbral Lunar Eclipse Locations")+
+          theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
+          theme(axis.title = element_text(size=rel(1.5)))
       } else {
         ggmap(map) + 
           geom_point(data=app_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="All Lunar Eclipse Locations")
+          labs(x= "Longitude", y= "Latitude", title="All Lunar Eclipse Locations")+
+          theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
+          theme(axis.title = element_text(size=rel(1.5)))
       }
     } else {
       if (input$z == "Annular") {
         ggmap(map) +
           geom_point(data=annular_solar, aes(longitude_value, latitude_value, color=month), size=4) +
-          labs(x="Longitude", y="Latitude", title="Annular Solar Eclipse Locations")
+          labs(x="Longitude", y="Latitude", title="Annular Solar Eclipse Locations")+
+          theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
+          theme(axis.title = element_text(size=rel(1.5)))
       }
       else if (input$z == "Total") {
         ggmap(map) + 
           geom_point(data=total_solar, aes(longitude_value, latitude_value, color=month), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Total Solar Eclipse Locations")
+          labs(x= "Longitude", y= "Latitude", title="Total Solar Eclipse Locations")+
+          theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
+          theme(axis.title = element_text(size=rel(1.5)))
       }
       else if (input$z == "Partial") {
         ggmap(map) + 
           geom_point(data=partial_solar, aes(longitude_value, latitude_value, color=month), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Partial Solar Eclipse Locations")
+          labs(x= "Longitude", y= "Latitude", title="Partial Solar Eclipse Locations")+
+          theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
+          theme(axis.title = element_text(size=rel(1.5)))
       }
       else if (input$z == "Hybrid") {
         ggmap(map) + 
           geom_point(data=hybrid_solar, aes(longitude_value, latitude_value, color=month), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Hybrid Solar Eclipse Locations")
+          labs(x= "Longitude", y= "Latitude", title="Hybrid Solar Eclipse Locations")+
+          theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
+          theme(axis.title = element_text(size=rel(1.5)))
       } else {
         ggmap(map) + 
           geom_point(data=app_solar, aes(longitude_value, latitude_value, color=month), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="All Solar Eclipse Locations")
+          labs(x= "Longitude", y= "Latitude", title="All Solar Eclipse Locations")+
+          theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
+          theme(axis.title = element_text(size=rel(1.5)))
       }
       
     }
