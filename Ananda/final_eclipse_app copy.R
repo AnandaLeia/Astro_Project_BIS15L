@@ -12,6 +12,10 @@ library(shiny)
 library(shinydashboard)
 library(ggmap)
 
+stylecss <- make_css(list(list('table', c('text-align', 'font-size'), c('center', '20px')),
+                          list('th', c('background-color', 'height'), c('lightgreen', '30px')))
+print(stylecss)
+
 
 # Loading the data
 
@@ -20,7 +24,6 @@ solar_eclipse <- read_csv(here("NASA lunar and solar eclipses", "solar.csv")) %>
 
 lunar_eclipse <- read_csv(here("NASA lunar and solar eclipses", "lunar.csv"), na=("-")) %>% 
   clean_names()
-
 
 
 # Converting Dates: to date type data format, individual year, month, day variables
@@ -89,6 +92,8 @@ ui <- dashboardPage(
   
 )
 
+tags$head(tags$link(rel = "stylesheet", type = "text/css", href = "stylecss"))
+
 server <- function(input, output, session) {
   session$onSessionEnded(stopApp)
   output$map <- renderPlot({
@@ -108,27 +113,27 @@ server <- function(input, output, session) {
     if (input$y == "Lunar") {
       if (input$a == "Total") {
         ggmap(map) + 
-          geom_point(data=total_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
+          geom_point(data=total_lunar, aes(x=longitude_value, y=latitude_value, color=month), size=4) +
           labs(x= "Longitude", y= "Latitude", title="Total Lunar Eclipse Locations")+
           theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
           theme(axis.title = element_text(size=rel(1.5)))
       }
       else if (input$a == "Partial") {
         ggmap(map) + 
-          geom_point(data=partial_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
+          geom_point(data=partial_lunar, aes(x=longitude_value, y=latitude_value, color=month), size=4) +
           labs(x= "Longitude", y= "Latitude", title="Partial Lunar Eclipse Locations")+
           theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
           theme(axis.title = element_text(size=rel(1.5)))
       }
       else if (input$a == "Penumbral") {
         ggmap(map) + 
-          geom_point(data=penumbral_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
+          geom_point(data=penumbral_lunar, aes(x=longitude_value, y=latitude_value, color=month), size=4) +
           labs(x= "Longitude", y= "Latitude", title="Penumbral Lunar Eclipse Locations")+
           theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
           theme(axis.title = element_text(size=rel(1.5)))
       } else {
         ggmap(map) + 
-          geom_point(data=app_lunar, aes(longitude_value, latitude_value, color=month), size=4) +
+          geom_point(data=app_lunar, aes(x=longitude_value, y=latitude_value, color=month), size=4) +
           labs(x= "Longitude", y= "Latitude", title="All Lunar Eclipse Locations")+
           theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
           theme(axis.title = element_text(size=rel(1.5)))
@@ -136,37 +141,38 @@ server <- function(input, output, session) {
     } else {
       if (input$z == "Annular") {
         ggmap(map) +
-          geom_point(data=annular_solar, aes(longitude_value, latitude_value, color=month), size=4) +
+          geom_point(data=annular_solar, aes(x=longitude_value, y=latitude_value, color=month), size=4) +
           labs(x="Longitude", y="Latitude", title="Annular Solar Eclipse Locations")+
           theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
           theme(axis.title = element_text(size=rel(1.5)))
       }
       else if (input$z == "Total") {
         ggmap(map) + 
-          geom_point(data=total_solar, aes(longitude_value, latitude_value, color=month), size=4) +
+          geom_point(data=total_solar, aes(x=longitude_value, y=latitude_value, color=month), size=4) +
           labs(x= "Longitude", y= "Latitude", title="Total Solar Eclipse Locations")+
           theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
           theme(axis.title = element_text(size=rel(1.5)))
       }
       else if (input$z == "Partial") {
         ggmap(map) + 
-          geom_point(data=partial_solar, aes(longitude_value, latitude_value, color=month), size=4) +
+          geom_point(data=partial_solar, aes(x=longitude_value, y=latitude_value, color=month), size=4) +
           labs(x= "Longitude", y= "Latitude", title="Partial Solar Eclipse Locations")+
           theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
           theme(axis.title = element_text(size=rel(1.5)))
       }
       else if (input$z == "Hybrid") {
         ggmap(map) + 
-          geom_point(data=hybrid_solar, aes(longitude_value, latitude_value, color=month), size=4) +
+          geom_point(data=hybrid_solar, aes(x=longitude_value, y=latitude_value, color=month), size=4) +
           labs(x= "Longitude", y= "Latitude", title="Hybrid Solar Eclipse Locations")+
           theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
           theme(axis.title = element_text(size=rel(1.5)))
       } else {
         ggmap(map) + 
-          geom_point(data=app_solar, aes(longitude_value, latitude_value, color=month), size=4) +
+          geom_point(data=app_solar, aes(x=longitude_value, y=latitude_value, color=month), size=4) +
           labs(x= "Longitude", y= "Latitude", title="All Solar Eclipse Locations")+
           theme(plot.title = element_text (size = rel(2), hjust = 0.5))+
           theme(axis.title = element_text(size=rel(1.5)))
+          
       }
       
     }

@@ -80,29 +80,28 @@ solar_cent %>%
   ggplot(aes(x = century, fill = eclipse_type))+
   geom_bar()
 ```
-```{r}
 
-```
-
-```{r}
-solar_dates %>% 
-  filter(eclipse_type=="T") %>% 
-  filter(year>=2000, year<=3000) %>% 
-  ggplot(aes(x=year))+
-  geom_bar()
-```
 ```{r}
 library(shiny)
 
 ui <- fluidPage(
-  selectInput()
+  selectInput("x", "Select Eclipse Type", choices = c("A", "A-", "A+", "Am", "An", "As", "H", "H2", "H3", "Hm", "P", "Pb", "Pe", "T", "T-", "T+", "Tm", "Tn", "Ts"), selected = "A")
+  selectInput("y", "Select Century", choices)
+  plotOutput ("plot")
 )
 
 server <- function(input, output, session) {
-  
+  output$plot <- renderPlot({
+    ggplot(data = solar_cent, aes_string(x = eclipse_time, y = path_width_km))
+  })
 }
 
 shinyApp(ui, server)
+```
+
+```{r}
+solar_cent %>% 
+  ggplot(aes(x=))
 ```
 
 https://sscc.wisc.edu/sscc/pubs/dwr/dates.html
