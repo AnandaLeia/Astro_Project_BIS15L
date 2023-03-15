@@ -435,6 +435,21 @@ solar %>%
 
 
 ## Making the map
+```{r}
+latz <- c(-77, 77)
+longz <- c(-164, 164)
+bboxz <- make_bbox(longz, latz, f=0.05)
+mapz <- get_map(bboxz, maptype = "toner-lite", source = "stamen")
+```
+```{r}
+ggmap(mapz)
+```
+```{r}
+solar %>% 
+  
+```
+
+
 
 ```{r}
 lat <- c(-80, 80)
@@ -442,6 +457,10 @@ long <- c(-180, 180)
 bbox <- make_bbox(long, lat, f=0.05)
 map <- get_map(bbox, maptype = "toner-lite", source = "stamen")
 ```
+```{r}
+ggmap(map)
+```
+
 
 ## Bare bones Dashboard shiny app
 
@@ -467,62 +486,75 @@ ui <- dashboardPage(
 server <- function(input, output, session) {
   output$map <- renderPlot({
     app_lunar <- lunar %>%
+      # NEW CODE
+      mutate(year_char = as.character(year)) %>% 
+      mutate(month_char = as.character(month)) %>%
+      mutate(day_char = as.character(day)) %>%
+      unite(date_char, "month_char", "day_char", "year_char", sep="/") %>% 
       filter(year == input$x)
     app_solar <- solar %>%
+      # NEW CODE
+      mutate(year_char = as.character(year)) %>% 
+      mutate(month_char = as.character(month)) %>%
+      mutate(day_char = as.character(day)) %>%
+      unite(date_char, "month_char", "day_char", "year_char", sep="/") %>%
       filter(year==input$x)
     # Defining Solar Eclipse Sub-types 
     annular_solar <- app_solar %>% filter(grepl("A", eclipse_type))
     partial_solar <- app_solar %>% filter(grepl("P", eclipse_type))
-    total_solar <- app_solar %>% filter(eclipse_type=="T" | eclipse_type=="Ts" |eclipse_type=="Tm" | eclipse_type=="Tn" | eclipse_type=="T-" | eclipse_type=="T+")
+    # NEW CODE
+    total_solar <- app_solar %>% filter(grepl("T", eclipse_type))
     hybrid_solar <- app_solar %>% filter(grepl("H", eclipse_type))
     # Defining Lunar Eclipse Sub-types
-    total_lunar <- app_lunar %>% filter(eclipse_type=="T" | eclipse_type=="T+" | eclipse_type=="T-")
+    # NEW CODE
+    total_lunar <- app_lunar %>% filter(grepl("T", eclipse_type))
     penumbral_lunar <- app_lunar %>% filter(grepl("N", eclipse_type))
     partial_lunar <- app_lunar %>% filter(grepl("P", eclipse_type))
     if (input$y == "Lunar") {
       if (input$a == "Total") {
         ggmap(map) + 
-        geom_point(data=total_lunar, aes(longitude_value, latitude_value, color=date), size=4) +
-        labs(x= "Longitude", y= "Latitude", title="Total Lunar Eclipse Locations")
+        geom_point(data=total_lunar, aes(longitude_value, latitude_value, color=date_char), size=4) +
+        # NEW CODE
+        labs(x= "Longitude", y= "Latitude", title="Total Lunar Eclipse Locations", color="Date (month/day/year)")
       }
       else if (input$a == "Partial") {
         ggmap(map) + 
-        geom_point(data=partial_lunar, aes(longitude_value, latitude_value, color=date), size=4) +
-        labs(x= "Longitude", y= "Latitude", title="Partial Lunar Eclipse Locations")
+        geom_point(data=partial_lunar, aes(longitude_value, latitude_value, color=date_char), size=4) +
+        labs(x= "Longitude", y= "Latitude", title="Partial Lunar Eclipse Locations", color="Date (month/day/year)")
       }
       else if (input$a == "Penumbral") {
         ggmap(map) + 
-        geom_point(data=penumbral_lunar, aes(longitude_value, latitude_value, color=date), size=4) +
-        labs(x= "Longitude", y= "Latitude", title="Penumbral Lunar Eclipse Locations")
+        geom_point(data=penumbral_lunar, aes(longitude_value, latitude_value, color=date_char), size=4) +
+        labs(x= "Longitude", y= "Latitude", title="Penumbral Lunar Eclipse Locations", color="Date (month/day/year)")
       } else {
         ggmap(map) + 
-        geom_point(data=app_lunar, aes(longitude_value, latitude_value, color=date), size=4) +
-        labs(x= "Longitude", y= "Latitude", title="All Lunar Eclipse Locations")
+        geom_point(data=app_lunar, aes(longitude_value, latitude_value, color=date_char), size=4) +
+        labs(x= "Longitude", y= "Latitude", title="All Lunar Eclipse Locations", color="Date (month/day/year)")
       }
     } else {
         if (input$z == "Annular") {
           ggmap(map) +
-            geom_point(data=annular_solar, aes(longitude_value, latitude_value, color=date), size=4) +
-            labs(x="Longitude", y="Latitude", title="Annular Solar Eclipse Locations")
+            geom_point(data=annular_solar, aes(longitude_value, latitude_value, color=date_char), size=4) +
+            labs(x="Longitude", y="Latitude", title="Annular Solar Eclipse Locations", color="Date (month/day/year)")
         }
         else if (input$z == "Total") {
           ggmap(map) + 
-          geom_point(data=total_solar, aes(longitude_value, latitude_value, color=date), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Total Solar Eclipse Locations")
+          geom_point(data=total_solar, aes(longitude_value, latitude_value, color=date_char), size=4) +
+          labs(x= "Longitude", y= "Latitude", title="Total Solar Eclipse Locations", color="Date (month/day/year)")
         }
         else if (input$z == "Partial") {
           ggmap(map) + 
-          geom_point(data=partial_solar, aes(longitude_value, latitude_value, color=date), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Partial Solar Eclipse Locations")
+          geom_point(data=partial_solar, aes(longitude_value, latitude_value, color=date_char), size=4) +
+          labs(x= "Longitude", y= "Latitude", title="Partial Solar Eclipse Locations", color="Date (month/day/year)")
         }
         else if (input$z == "Hybrid") {
           ggmap(map) + 
-          geom_point(data=hybrid_solar, aes(longitude_value, latitude_value, color=date), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Hybrid Solar Eclipse Locations")
+          geom_point(data=hybrid_solar, aes(longitude_value, latitude_value, color=date_char), size=4) +
+          labs(x= "Longitude", y= "Latitude", title="Hybrid Solar Eclipse Locations", color="Date (month/day/year)")
         } else {
           ggmap(map) + 
-          geom_point(data=app_solar, aes(longitude_value, latitude_value, color=date), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="All Solar Eclipse Locations")
+          geom_point(data=app_solar, aes(longitude_value, latitude_value, color=date_char), size=4) +
+          labs(x= "Longitude", y= "Latitude", title="All Solar Eclipse Locations", color="Date (month/day/year)")
         }
       
     }
@@ -536,6 +568,20 @@ solar %>%
   mutate(date_factor =  as.factor(date)) %>% 
   select(date, date_factor)
 ```
+```{r}
+solar %>% 
+  select(date, year, month, day)
+```
+
+```{r}
+solar %>% 
+  mutate(year_char = as.character(year)) %>% 
+  mutate(month_char = as.character(month)) %>%
+  mutate(day_char = as.character(day)) %>%
+  unite(date_char, "month_char", "day_char", "year_char", sep="/") %>% 
+  select(date_char)
+```
+
 
 
 
