@@ -9,7 +9,7 @@ Collaborative mapping project of lunar and solar eclipse occurrences over 3 mill
  - folders for each individual member and their work (titled with member names)
  - a folder of brainstorming possible datasets for this project (Potential Datasets)
  - a folder of the data we used for the final project (NASA Lunar and Solar Eclipses)
- - a collaborative RMarkdown withour final app and plots (final_eclipse_app.Rmd)
+ - a collaborative RMarkdown with our final app and plots (final_eclipse_app.Rmd)
  - a stand-alone .R script with just the final app (final_eclipse_app.R)
 
 **Member Contributions:** 
@@ -27,9 +27,15 @@ Katie:
 
 Jon:
  - built a shiny dashboard app that tracks peak eclipse-viewing locations by year, and displays them on a map (ggmap):
+<<<<<<< Updated upstream
    - created user input option for type of eclipse and year
    - created user input option for sub-type of eclipse (which changes based on their choice for type of eclipse)
    - customized layout with CSS
+=======
+ - created user input option for type of eclipse 
+ - created user input option for sub-type of eclipse (which changes based on their choice for type of eclipse)
+ - customized layout with CSS
+>>>>>>> Stashed changes
 
 References: 
 
