@@ -124,7 +124,7 @@ library(shiny)
 
 ui <- dashboardPage(
   skin = "blue",
-  dashboardHeader(title = "Peak Viewing Locations for Eclipses", 
+  dashboardHeader(title = "Peak Viewing Locations for Lunar and Solar Eclipses", 
                   titleWidth = 400,
                   tags$li(class="dropdown",
                     tags$style(".skin-blue .main-header .logo {
