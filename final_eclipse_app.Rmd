@@ -310,10 +310,17 @@ solar_cent %>%
   ggplot(aes(x = century, fill = eclipse_type_broad))+
   geom_bar()+
   labs(title="Proportions of Solar Eclipse Types",
-       x="Solar Eclipse Type",
+       x="Century",
        y="Count",
        fill="Solar Eclipse Type")+
-  scale_fill_brewer(name = "Solar Eclipse Type", labels = c("Annular", "Hybrid (Annular and Total)", "Partial", "Total"), palette = "RdYlBu")
+  scale_fill_brewer(name = "Solar Eclipse Type", labels = c("Annular", "Hybrid (Annular and Total)", "Partial", "Total"), palette = "RdYlBu")+
+  theme(panel.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(plot.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(axis.text = element_text(colour = 'white'))+
+  theme(axis.title = element_text(colour = 'white'))+
+  theme(title = element_text(colour = 'white', size = rel(1.5)))+
+  theme(legend.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(legend.text =element_text(colour = 'white'))
 ```
 
 #### LUNAR Creating Column Century (as numeric)
@@ -369,10 +376,17 @@ lunar_cent %>%
   ggplot(aes(x = century, fill = eclipse_type_broad))+
   geom_bar()+
   labs(title="Proportions of Lunar Eclipse Types",
-       x="Lunar Eclipse Type",
+       x="Century",
        y="Count",
        fill="Lunar Eclipse Type")+
-  scale_fill_brewer(name = "Lunar Eclipse Type", labels = c("Penumbral", "Partial", "Total"), palette = "RdYlBu")
+  scale_fill_brewer(name = "Lunar Eclipse Type", labels = c("Penumbral", "Partial", "Total"), palette = "RdYlBu")+
+  theme(panel.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(plot.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(axis.text = element_text(colour = 'white'))+
+  theme(axis.title = element_text(colour = 'white'))+
+  theme(title = element_text(colour = 'white', size = rel(1.5)))+
+  theme(legend.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(legend.text =element_text(colour = 'white'))
 ```
 
 ## Proportions of Eclipse Types
@@ -389,7 +403,14 @@ solar %>%
        x="Solar Eclipse Type",
        y="Count",
        fill="Solar Eclipse Type")+
-  scale_fill_brewer(name = "Solar Eclipse Type", labels = c("Annular", "Hybrid (Annular and Total)", "Partial", "Total"), palette = "RdYlBu")
+  scale_fill_brewer(name = "Solar Eclipse Type", labels = c("Annular", "Hybrid (Annular and Total)", "Partial", "Total"), palette = "RdYlBu")+
+  theme(panel.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(plot.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(axis.text = element_text(colour = 'white'))+
+  theme(axis.title = element_text(colour = 'white'))+
+  theme(title = element_text(colour = 'white', size = rel(1.5)))+
+  theme(legend.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(legend.text =element_text(colour = 'white'))
 ```
 #Lunar
 ```{r}
@@ -403,6 +424,13 @@ lunar %>%
        x="Lunar Eclipse Type",
        y="Count",
        fill="Lunar Eclipse Type")+
-  scale_fill_brewer(name = "Lunar Eclipse Type", labels = c("Penumbral", "Partial", "Total"), palette = "RdYlBu")
+  scale_fill_brewer(name = "Lunar Eclipse Type", labels = c("Penumbral", "Partial", "Total"), palette = "RdYlBu")+
+  theme(panel.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(plot.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(axis.text = element_text(colour = 'white'))+
+  theme(axis.title = element_text(colour = 'white'))+
+  theme(title = element_text(colour = 'white', size = rel(1.5)))+
+  theme(legend.background = element_rect(fill = 'black', colour = 'black'))+
+  theme(legend.text =element_text(colour = 'white'))
 ```
 
