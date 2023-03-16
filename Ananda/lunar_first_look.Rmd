@@ -29,3 +29,8 @@ lunar_dates <- lunar %>%
 lunar_dates
 ```
 
+```{r}
+lunar_dates %>% 
+  filter(year <= 2023)
+```
+

@@ -25,7 +25,7 @@ library(ggmap)
 ```
 
 
-## Loading the Data
+## Our data
 
 data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
 
@@ -37,8 +37,8 @@ https://eclipse.gsfc.nasa.gov/LEcat5/LEcatkey.html
 #### Key to Catalog of Solar Eclipses:
 https://eclipse.gsfc.nasa.gov/SEcat5/SEcatkey.html
 
-
-*Remember to change the path for loading the data between people*
+#Loading the data
+*Here command should automatically ensure correct path between users*
 ```{r}
 getwd()
 ```
@@ -83,7 +83,6 @@ lunar_dates
 ```
 
 
-
 ## Converting Latitude and Longitude Coords
 ```{r}
 lunar <- lunar_dates %>% 
@@ -107,7 +106,6 @@ solar <- solar_dates %>%
 solar %>%
     select(latitude_value, longitude_value)
 ```
-
 
 
 ## Making the map
@@ -255,7 +253,6 @@ shinyApp(ui, server)
 ```
 
 
-
 # Other Data Analysis (For Presentation)
 
 ## Eclipse Types by Century
@@ -298,14 +295,13 @@ solar_cent
 ```{r}
 solar_cent$century = as.numeric(solar_cent$century_char)
 ```
-
-#### Building the plot
+#### Building plot of solar eclipses by type and century
 ```{r}
 solar_cent %>% 
   ggplot(aes(x = century, fill = eclipse_type))+
   geom_bar()
 ```
-#### Group the eclipse types by broader category
+#### Group the eclipse types by broader category and plot
 ```{r}
 solar_cent %>% 
   mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
@@ -314,35 +310,6 @@ solar_cent %>%
                                         grepl("T", eclipse_type) ~ "T")) %>%
   ggplot(aes(x = century, fill = eclipse_type_broad))+
   geom_bar()
-```
-
-## Proportions of Eclipse Types
-```{r}
-solar %>% 
-  mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
-                                        grepl("H", eclipse_type) ~ "H",
-                                        grepl("P", eclipse_type) ~ "P",
-                                        grepl("T", eclipse_type) ~ "T")) %>% 
-  ggplot(aes(x=eclipse_type_broad, fill=eclipse_type_broad))+
-  geom_bar()+
-  labs(title="Proportions of Solar Eclipse Types",
-       x="Solar Eclipse Type",
-       y="Count",
-       fill="Solar Eclipse Type")+
-  scale_fill_discrete(name = "Solar Eclipse Type", labels = c("Annular", "Hybrid (Annular and Total)", "Partial", "Total"))
-```
-```{r}
-lunar %>% 
-  mutate(eclipse_type_broad = case_when(grepl("N", eclipse_type) ~ "N",
-                                        grepl("P", eclipse_type) ~ "P",
-                                        grepl("T", eclipse_type) ~ "T")) %>% 
-  ggplot(aes(x=eclipse_type_broad, fill=eclipse_type_broad))+
-  geom_bar()+
-  labs(title="Proportions of Lunar Eclipse Types",
-       x="Lunar Eclipse Type",
-       y="Count",
-       fill="Lunar Eclipse Type")+
-  scale_fill_discrete(name = "Lunar Eclipse Type", labels = c("Penumbral", "Partial", "Total"))
 ```
 
 #### LUNAR Creating Column Century (as numeric)
@@ -383,7 +350,6 @@ lunar_cent
 ```{r}
 lunar_cent$century = as.numeric(lunar_cent$century_char)
 ```
-
 #### Building the plot
 ```{r}
 lunar_cent %>% 
@@ -401,4 +367,34 @@ lunar_cent %>%
   geom_bar()
 ```
 
+## Proportions of Eclipse Types
+#Solar
+```{r}
+solar %>% 
+  mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
+                                        grepl("H", eclipse_type) ~ "H",
+                                        grepl("P", eclipse_type) ~ "P",
+                                        grepl("T", eclipse_type) ~ "T")) %>% 
+  ggplot(aes(x=eclipse_type_broad, fill=eclipse_type_broad))+
+  geom_bar()+
+  labs(title="Proportions of Solar Eclipse Types",
+       x="Solar Eclipse Type",
+       y="Count",
+       fill="Solar Eclipse Type")+
+  scale_fill_discrete(name = "Solar Eclipse Type", labels = c("Annular", "Hybrid (Annular and Total)", "Partial", "Total"))
+```
+#Lunar
+```{r}
+lunar %>% 
+  mutate(eclipse_type_broad = case_when(grepl("N", eclipse_type) ~ "N",
+                                        grepl("P", eclipse_type) ~ "P",
+                                        grepl("T", eclipse_type) ~ "T")) %>% 
+  ggplot(aes(x=eclipse_type_broad, fill=eclipse_type_broad))+
+  geom_bar()+
+  labs(title="Proportions of Lunar Eclipse Types",
+       x="Lunar Eclipse Type",
+       y="Count",
+       fill="Lunar Eclipse Type")+
+  scale_fill_discrete(name = "Lunar Eclipse Type", labels = c("Penumbral", "Partial", "Total"))
+```
 

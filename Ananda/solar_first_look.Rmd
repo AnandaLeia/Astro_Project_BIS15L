@@ -36,6 +36,12 @@ solar_dates <- solar %>%
          day = lubridate::day(date))
 solar_dates
 ```
+```{r}
+solar_dates %>% 
+  filter(year <= 2023)
+```
+
+
 ##Creating centuries column
 ```{r}
 solar_cent <- solar_dates %>% 
@@ -98,6 +104,10 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
+```{r}
+
+```
+
 
 ```{r}
 solar_cent %>% 
