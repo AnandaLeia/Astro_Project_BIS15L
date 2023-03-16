@@ -15,6 +15,6 @@ Convert longitude and latitude columns to numeric
 Convert calendar_date column to date and separate date month year into three columns
 Map all eclipses by longitute and latitude
 Create app displaying maps of eclipses by date
-If we want to put solar and lunar onto same app, MAYBE figure out a way to combine the datasets into on, create a new variable for type of eclipse (solar or lunar)
+If we want to put solar and lunar onto same app, maybe figure out a way to combine the datasets into one, create a new variable for type of eclipse (solar or lunar)
 Create a way for people to select by type of eclipse (annular, total, partial, hybrid)
-Make it look nice
+Make it look nice 

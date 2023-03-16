@@ -75,7 +75,7 @@ library(shiny)
 
 ui <- dashboardPage(
   skin = "blue",
-  dashboardHeader(title = "Peak Viewing Locations for Lunar and Solar Eclipses", 
+  dashboardHeader(title = "Peak Viewing Locations", 
                   titleWidth = 400,
                   tags$li(class="dropdown",
                           tags$style(".skin-blue .main-header .logo {
@@ -111,7 +111,7 @@ ui <- dashboardPage(
                               tags$style(".skin-blue .main-sidebar {
                     background-color: #211212;
                     font-family: trebuchet ms;
-                    font-size: 16px;
+                    font-size: 20px;
                     color: #969696;
                     border-style: double;
                     border-color: #fadaa2;
