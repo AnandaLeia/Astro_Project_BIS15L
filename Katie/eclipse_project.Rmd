@@ -150,6 +150,16 @@ map_s <- get_map(bbox_s, maptype = "toner-lite", source = "stamen")
 ggmap(map_s)
 ```
 
+```{r}
+latz <- c(-77, 77)
+longz <- c(-164, 164)
+bboxz <- make_bbox(longz, latz, f=0.05)
+mapz <- get_map(bboxz, maptype = "toner-lite", source = "stamen")
+```
+```{r}
+ggmap(mapz)
+```
+
 ## Mapping Tests
 ```{r}
 ggmap(map_s)+
@@ -249,8 +259,6 @@ solar %>%
 
 
 
-
-
 ## Plots of Eclipse Type Proprtions
 ```{r}
 solar %>% 
@@ -307,266 +315,7 @@ lunar %>%
 
 
 
-
-
-
-
-
-
-
-
-
----
-title: "final_eclipse_app"
-output: html_document
-date: "2023-03-09"
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## Libraries
-```{r message=FALSE, warning=FALSE}
-library(tidyverse)
-library(janitor)
-library(skimr)
-library(naniar)
-library(here)
-library(gtools)
-library(RColorBrewer)
-library(paletteer)
-library(ggthemes)
-library(shiny)
-library(shinydashboard)
-library(ggmap)
-```
-
-
-## Loading the Data
-
-data website: https://www.kaggle.com/datasets/nasa/solar-eclipses
-
-*Remember to change the path for loading the data between people*
-```{r}
-getwd()
-```
-```{r}
-solar_eclipse <- read_csv("/Users/katiericketts/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/solar.csv") %>% 
-  clean_names()
-```
-```{r}
-lunar_eclipse <- read_csv(("/Users/katiericketts/Desktop/Astro_Project_BIS15L/NASA lunar and solar eclipses/lunar.csv"), na =("-")) %>% 
-  clean_names()
-```
-```{r}
-solar_eclipse <- read_csv(here("NASA lunar and solar eclipses", "solar.csv")) %>% 
-  clean_names()
-```
-```{r}
-lunar_eclipse <- read_csv(here("NASA lunar and solar eclipses", "lunar.csv"), na=("-")) %>% 
-  clean_names()
-```
-
-
-## NAs
-```{r}
-naniar::miss_var_summary(solar_eclipse)
-```
-```{r}
-naniar::miss_var_summary(lunar_eclipse)
-```
-
-
-## Variable Meanings:
-
-#### Key to Catalog of Lunar Eclipses:
-https://eclipse.gsfc.nasa.gov/LEcat5/LEcatkey.html
-
-##### Key to Catalog of Solar Eclipses:
-https://eclipse.gsfc.nasa.gov/SEcat5/SEcatkey.html
-
-
-
-
-##Converting Dates: to date type data format, individual year, month, day variables
-```{r}
-solar_dates <- solar_eclipse %>% 
-  filter(!grepl("^-", calendar_date)) %>% 
-  mutate(date = as.Date(calendar_date, format = "%Y %B %e")) %>% 
-  select(!c(calendar_date)) %>% 
-  mutate(year = lubridate::year(date),
-         month = lubridate::month(date),
-         day = lubridate::day(date))
-solar_dates
-```
-```{r}
-lunar_dates <- lunar_eclipse %>% 
-  filter(!grepl("^-", calendar_date)) %>% 
-  mutate(date = as.Date(calendar_date, format = "%Y %B %e")) %>% 
-  select(!c(calendar_date)) %>% 
-  mutate(year = lubridate::year(date),
-         month = lubridate::month(date),
-         day = lubridate::day(date))
-lunar_dates
-```
-
-
-
-## Converting Latitude and Longitude Coords
-```{r}
-lunar <- lunar_dates %>% 
-  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
-  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
-  mutate(lat_num = as.numeric(lat)) %>% 
-  mutate(long_num = as.numeric(long)) %>% 
-  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
-  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num)) 
-lunar %>%
-    select(latitude_value, longitude_value)
-```
-```{r}
-solar <- solar_dates %>% 
-  separate(latitude, into=c("lat", "NS"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
-  separate(longitude, into=c("long", "EW"), sep="(?<=[0-9])(?=[A-Za-z])") %>% 
-  mutate(lat_num = as.numeric(lat)) %>% 
-  mutate(long_num = as.numeric(long)) %>% 
-  mutate(latitude_value = ifelse(NS=="N", lat_num, -lat_num)) %>% 
-  mutate(longitude_value = ifelse(EW=="E", long_num, -long_num))
-solar %>%
-    select(latitude_value, longitude_value)
-```
-
-
-
-## Making the map
-```{r}
-latz <- c(-77, 77)
-longz <- c(-164, 164)
-bboxz <- make_bbox(longz, latz, f=0.05)
-mapz <- get_map(bboxz, maptype = "toner-lite", source = "stamen")
-```
-```{r}
-ggmap(mapz)
-```
-```{r}
-solar %>% 
-  
-```
-
-
-
-```{r}
-lat <- c(-80, 80)
-long <- c(-180, 180)
-bbox <- make_bbox(long, lat, f=0.05)
-map <- get_map(bbox, maptype = "toner-lite", source = "stamen")
-```
-```{r}
-ggmap(map)
-```
-
-
-## Bare bones Dashboard shiny app
-
-```{r}
-library(shiny)
-
-ui <- dashboardPage(
-  dashboardHeader(title = "Peak Viewing Locations for Eclipses"),
-  dashboardSidebar(title="Eclipse Selections", 
-                   textInput("x", "Year", placeholder = "Type in a Year from 0-3000"),
-                   selectInput("y", "Solar or Lunar Eclipses:", choices=c("Solar", "Lunar"), selected = "Solar"),
-                   conditionalPanel(condition = "input.y == 'Solar'", radioButtons(
-                     "z", label = "Which Type of Solar Eclipse", choices = c("Total", "Partial", "Annular", "Hybrid", "All Types"), selected = "All Types")
-                    ),
-                   conditionalPanel(condition = "input.y == 'Lunar'", radioButtons(
-                     "a", label="Which Type of Lunar Eclipse", choices = c("Total", "Penumbral", "Partial", "All Types"), selected = "All Types")
-                   )
-                   ),
-  dashboardBody(plotOutput("map", width = "600px", height = "700px"))
-  
-)
-
-server <- function(input, output, session) {
-  output$map <- renderPlot({
-    app_lunar <- lunar %>%
-      # NEW CODE
-      mutate(year_char = as.character(year)) %>% 
-      mutate(month_char = as.character(month)) %>%
-      mutate(day_char = as.character(day)) %>%
-      unite(date_char, "month_char", "day_char", "year_char", sep="/") %>% 
-      filter(year == input$x)
-    app_solar <- solar %>%
-      # NEW CODE
-      mutate(year_char = as.character(year)) %>% 
-      mutate(month_char = as.character(month)) %>%
-      mutate(day_char = as.character(day)) %>%
-      unite(date_char, "month_char", "day_char", "year_char", sep="/") %>%
-      filter(year==input$x)
-    # Defining Solar Eclipse Sub-types 
-    annular_solar <- app_solar %>% filter(grepl("A", eclipse_type))
-    partial_solar <- app_solar %>% filter(grepl("P", eclipse_type))
-    # NEW CODE
-    total_solar <- app_solar %>% filter(grepl("T", eclipse_type))
-    hybrid_solar <- app_solar %>% filter(grepl("H", eclipse_type))
-    # Defining Lunar Eclipse Sub-types
-    # NEW CODE
-    total_lunar <- app_lunar %>% filter(grepl("T", eclipse_type))
-    penumbral_lunar <- app_lunar %>% filter(grepl("N", eclipse_type))
-    partial_lunar <- app_lunar %>% filter(grepl("P", eclipse_type))
-    if (input$y == "Lunar") {
-      if (input$a == "Total") {
-        ggmap(map) + 
-        geom_point(data=total_lunar, aes(longitude_value, latitude_value, color=date_char), size=4) +
-        # NEW CODE
-        labs(x= "Longitude", y= "Latitude", title="Total Lunar Eclipse Locations", color="Date (month/day/year)")
-      }
-      else if (input$a == "Partial") {
-        ggmap(map) + 
-        geom_point(data=partial_lunar, aes(longitude_value, latitude_value, color=date_char), size=4) +
-        labs(x= "Longitude", y= "Latitude", title="Partial Lunar Eclipse Locations", color="Date (month/day/year)")
-      }
-      else if (input$a == "Penumbral") {
-        ggmap(map) + 
-        geom_point(data=penumbral_lunar, aes(longitude_value, latitude_value, color=date_char), size=4) +
-        labs(x= "Longitude", y= "Latitude", title="Penumbral Lunar Eclipse Locations", color="Date (month/day/year)")
-      } else {
-        ggmap(map) + 
-        geom_point(data=app_lunar, aes(longitude_value, latitude_value, color=date_char), size=4) +
-        labs(x= "Longitude", y= "Latitude", title="All Lunar Eclipse Locations", color="Date (month/day/year)")
-      }
-    } else {
-        if (input$z == "Annular") {
-          ggmap(map) +
-            geom_point(data=annular_solar, aes(longitude_value, latitude_value, color=date_char), size=4) +
-            labs(x="Longitude", y="Latitude", title="Annular Solar Eclipse Locations", color="Date (month/day/year)")
-        }
-        else if (input$z == "Total") {
-          ggmap(map) + 
-          geom_point(data=total_solar, aes(longitude_value, latitude_value, color=date_char), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Total Solar Eclipse Locations", color="Date (month/day/year)")
-        }
-        else if (input$z == "Partial") {
-          ggmap(map) + 
-          geom_point(data=partial_solar, aes(longitude_value, latitude_value, color=date_char), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Partial Solar Eclipse Locations", color="Date (month/day/year)")
-        }
-        else if (input$z == "Hybrid") {
-          ggmap(map) + 
-          geom_point(data=hybrid_solar, aes(longitude_value, latitude_value, color=date_char), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="Hybrid Solar Eclipse Locations", color="Date (month/day/year)")
-        } else {
-          ggmap(map) + 
-          geom_point(data=app_solar, aes(longitude_value, latitude_value, color=date_char), size=4) +
-          labs(x= "Longitude", y= "Latitude", title="All Solar Eclipse Locations", color="Date (month/day/year)")
-        }
-      
-    }
-      })
-    }
-shinyApp(ui, server)
-```
+## Displaying the date within the app
 
 ```{r}
 solar %>% 
@@ -589,95 +338,18 @@ solar %>%
 
 
 
+## Experimenting with color palettes
 
-
-# Other Data Analysis (For Presentation)
-
-## Eclipse Types by Century
-
-#### Creating Column Century (as numeric)
 ```{r}
-solar_cent <- solar %>% 
-  mutate(century_char = case_when(year >= 0 & year <100 ~ "1",
-                                  year >= 100 & year <200 ~ "2",
-                                  year >= 200 & year <300 ~ "3",
-                                  year >= 300 & year <400 ~ "4",
-                                  year >= 400 & year <500 ~ "5",
-                                  year >= 500 & year <600 ~ "6",
-                                  year >= 600 & year <700 ~ "7",
-                                  year >= 700 & year <800 ~ "8",
-                                  year >= 800 & year <900 ~ "9",
-                                  year >= 900 & year <1000 ~ "10",
-                                  year >= 1000 & year <1100 ~ "11",
-                                  year >= 1100 & year <1200 ~ "12",
-                                  year >= 1200 & year <1300 ~ "13",
-                                  year >= 1300 & year <1400 ~ "14",
-                                  year >= 1400 & year <1500 ~ "15",
-                                  year >= 1500 & year <1600 ~ "16",
-                                  year >= 1600 & year <1700 ~ "17",
-                                  year >= 1700 & year <1800 ~ "18",
-                                  year >= 1800 & year <1900 ~ "19",
-                                  year >= 1900 & year <2000 ~ "20",
-                                  year >= 2000 & year <2100 ~ "21",
-                                  year >= 2100 & year <2200 ~ "22",
-                                  year >= 2200 & year <2300 ~ "23",
-                                  year >= 2300 & year <2400 ~ "24",
-                                  year >= 2400 & year <2500 ~ "25",
-                                  year >= 2500 & year <2600 ~ "26",
-                                  year >= 2600 & year <2700 ~ "27",
-                                  year >= 2700 & year <2800 ~ "28",
-                                  year >= 2800 & year <2900 ~ "29",
-                                  year >= 2900 & year <3000 ~ "30"))
-solar_cent
+p1_futurama <- ggplot() + scale_color_futurama()
+p2_futurama <- p2 + scale_fill_futurama()
+grid.arrange(p1_futurama, p2_futurama, ncol = 2)
 ```
 ```{r}
-solar_cent$century = as.numeric(solar_cent$century_char)
-```
-
-#### Building the plot
-```{r}
-solar_cent %>% 
-  ggplot(aes(x = century, fill = eclipse_type))+
-  geom_bar()
-```
-#### Group the eclipse types by broader category
-```{r}
-solar_cent %>% 
-  mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
-                                        grepl("H", eclipse_type) ~ "H",
-                                        grepl("P", eclipse_type) ~ "P",
-                                        grepl("T", eclipse_type) ~ "T")) %>%
-  ggplot(aes(x = century, fill = eclipse_type_broad))+
-  geom_bar()
-```
-
-## Proportions of Eclipse Types
-```{r}
-solar %>% 
-  mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
-                                        grepl("H", eclipse_type) ~ "H",
-                                        grepl("P", eclipse_type) ~ "P",
-                                        grepl("T", eclipse_type) ~ "T")) %>% 
-  ggplot(aes(x=eclipse_type_broad, fill=eclipse_type_broad))+
-  geom_bar()+
-  labs(title="Proportions of Solar Eclipse Types",
-       x="Solar Eclipse Type",
-       y="Count",
-       fill="Solar Eclipse Type")+
-  scale_fill_discrete(name = "Solar Eclipse Type", labels = c("Annular", "Hybrid (Annular and Total)", "Partial", "Total"))
+eclipse_palette <- paletteer_d("ggsci::planetexpress_futurama")
 ```
 ```{r}
-lunar %>% 
-  mutate(eclipse_type_broad = case_when(grepl("N", eclipse_type) ~ "N",
-                                        grepl("P", eclipse_type) ~ "P",
-                                        grepl("T", eclipse_type) ~ "T")) %>% 
-  ggplot(aes(x=eclipse_type_broad, fill=eclipse_type_broad))+
-  geom_bar()+
-  labs(title="Proportions of Lunar Eclipse Types",
-       x="Lunar Eclipse Type",
-       y="Count",
-       fill="Lunar Eclipse Type")+
-  scale_fill_discrete(name = "Lunar Eclipse Type", labels = c("Penumbral", "Partial", "Total"))
+barplot(rep(1,14), axes=FALSE, col=eclipse_palette)
 ```
 
 
