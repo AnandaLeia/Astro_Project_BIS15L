@@ -15,7 +15,12 @@ Collaborative mapping project of lunar and solar eclipse occurrences over 3 mill
 **Member Contributions:** 
 
 Ananda:
- - 
+ - cleaned names and NA's
+ - converted calendar date variable from character to date-type data
+ - mutated to create century variable
+ - plotted eclipse type over centuries with Katie's broad eclipse types
+ - uniformed format and aesthetics across all plots
+ - created slideshow
 
 Katie:
  - converted latitude and longitude coordinates into a usable format
