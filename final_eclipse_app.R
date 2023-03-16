@@ -74,8 +74,31 @@ map <- get_map(bbox, maptype = "toner-lite", source = "stamen")
 library(shiny)
 
 ui <- dashboardPage(
-  dashboardHeader(title = "Peak Viewing Locations for Lunar and Solar Eclipses"),
-  dashboardSidebar(title="Eclipse Selections", 
+  skin = "blue",
+  dashboardHeader(title = "Peak Viewing Locations for Lunar and Solar Eclipses", 
+                  titleWidth = 400,
+                  tags$li(class="dropdown",
+                          tags$style(".skin-blue .main-header .logo {
+          background-color: #211212;
+          font-family: trebuchet ms;
+          font-size: 20px;
+          border-style: double;
+          border-color: #fadaa2;
+          border-width: 6px 6px 1px 6px;
+          border-radius: 10px;
+          } 
+          
+          .skin-blue .main-header .logo:hover {background-color: #4a4040;
+          
+          }
+          
+          .skin-blue .main-header .navbar {
+          background-color: #241c1c;
+          }
+          ")
+                          )),
+  dashboardSidebar(title="Eclipse Selections",
+                   width = 400,
                    textInput("x", "Year", placeholder = "Enter a Year from 0 to 3000"),
                    selectInput("y", "Solar or Lunar Eclipses:", choices=c("Solar", "Lunar"), selected = "Solar"),
                    conditionalPanel(condition = "input.y == 'Solar'", radioButtons(
@@ -83,9 +106,26 @@ ui <- dashboardPage(
                    ),
                    conditionalPanel(condition = "input.y == 'Lunar'", radioButtons(
                      "a", label="Which Type of Lunar Eclipse", choices = c("Total", "Penumbral", "Partial", "All Types"), selected = "All Types")
-                   )
+                   ),
+                   tags$aside(class="sidebar",
+                              tags$style(".skin-blue .main-sidebar {
+                    background-color: #211212;
+                    font-family: trebuchet ms;
+                    font-size: 16px;
+                    color: #969696;
+                    border-style: double;
+                    border-color: #fadaa2;
+                    border-width: 0px 6px 6px 4px; 
+                    border-radius: 10px;
+                    }
+                     
+                    .skin-blue .main-sidebar .sidebar a:active{
+                    background-color: coral;
+                    }           
+                                         
+                                         "))
   ),
-  dashboardBody(plotOutput("map", width = "600px", height = "700px"))
+  dashboardBody(plotOutput("map", width = "900px", height = "1000px"), style="background-image: linear-gradient(#4a4040, #fadaa2);")
   
 )
 
