@@ -309,7 +309,12 @@ solar_cent %>%
                                         grepl("P", eclipse_type) ~ "P",
                                         grepl("T", eclipse_type) ~ "T")) %>%
   ggplot(aes(x = century, fill = eclipse_type_broad))+
-  geom_bar()
+  geom_bar()+
+  labs(title="Proportions of Solar Eclipse Types",
+       x="Solar Eclipse Type",
+       y="Count",
+       fill="Solar Eclipse Type")+
+  scale_fill_brewer(name = "Solar Eclipse Type", labels = c("Annular", "Hybrid (Annular and Total)", "Partial", "Total"), palette = "RdYlBu")
 ```
 
 #### LUNAR Creating Column Century (as numeric)
@@ -359,12 +364,16 @@ lunar_cent %>%
 #### Group the eclipse types by broader category
 ```{r}
 lunar_cent %>% 
-  mutate(eclipse_type_broad = case_when(grepl("A", eclipse_type) ~ "A",
-                                        grepl("H", eclipse_type) ~ "H",
+  mutate(eclipse_type_broad = case_when(grepl("N", eclipse_type) ~ "N",
                                         grepl("P", eclipse_type) ~ "P",
                                         grepl("T", eclipse_type) ~ "T")) %>%
   ggplot(aes(x = century, fill = eclipse_type_broad))+
-  geom_bar()
+  geom_bar()+
+  labs(title="Proportions of Lunar Eclipse Types",
+       x="Lunar Eclipse Type",
+       y="Count",
+       fill="Lunar Eclipse Type")+
+  scale_fill_brewer(name = "Lunar Eclipse Type", labels = c("Penumbral", "Partial", "Total"), palette = "RdYlBu")
 ```
 
 ## Proportions of Eclipse Types
@@ -381,7 +390,7 @@ solar %>%
        x="Solar Eclipse Type",
        y="Count",
        fill="Solar Eclipse Type")+
-  scale_fill_discrete(name = "Solar Eclipse Type", labels = c("Annular", "Hybrid (Annular and Total)", "Partial", "Total"))
+  scale_fill_brewer(name = "Solar Eclipse Type", labels = c("Annular", "Hybrid (Annular and Total)", "Partial", "Total"), palette = "RdYlBu")
 ```
 #Lunar
 ```{r}
@@ -395,6 +404,6 @@ lunar %>%
        x="Lunar Eclipse Type",
        y="Count",
        fill="Lunar Eclipse Type")+
-  scale_fill_discrete(name = "Lunar Eclipse Type", labels = c("Penumbral", "Partial", "Total"))
+  scale_fill_brewer(name = "Lunar Eclipse Type", labels = c("Penumbral", "Partial", "Total"), palette = "RdYlBu")
 ```
 
