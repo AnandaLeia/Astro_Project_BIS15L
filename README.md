@@ -31,6 +31,12 @@ Jon:
    - created user input option for sub-type of eclipse (which changes based on their choice for type of eclipse)
    - customized layout with CSS
 
-References: "Solar And Lunar Eclipses", NASA's Goddard Space Flight Center, solar and lunar eclipse predictions produced by Fred Espenak.
+References: 
+
+"Solar And Lunar Eclipses", NASA's Goddard Space Flight Center, solar and lunar eclipse predictions produced by Fred Espenak.
 https://www.kaggle.com/datasets/nasa/solar-eclipses.
+
+Smith, D. (n.d.). Super Blood Moon Lunar Eclipse Over Morro Rock in Morro Bay. Don Smith Photography. Retrieved March 15, 2023, from https://donsmithphotography.aminus3.com/image/2022-05-18.html. 
+
+Narayanan, P. (2020). Partial Annular Solar Eclipse. Sky &amp; Telescope. Retrieved March 15, 2023, from https://skyandtelescope.org/online-gallery/partial-annular-solar-eclipse-kingdom-of-bahrain-sunrise/. 
 
