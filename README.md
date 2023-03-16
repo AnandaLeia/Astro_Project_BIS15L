@@ -27,15 +27,11 @@ Katie:
 
 Jon:
  - built a shiny dashboard app that tracks peak eclipse-viewing locations by year, and displays them on a map (ggmap):
-<<<<<<< Updated upstream
-   - created user input option for type of eclipse and year
-   - created user input option for sub-type of eclipse (which changes based on their choice for type of eclipse)
-   - customized layout with CSS
-=======
- - created user input option for type of eclipse 
+ - created user input option for type of eclipse and year
  - created user input option for sub-type of eclipse (which changes based on their choice for type of eclipse)
  - customized layout with CSS
->>>>>>> Stashed changes
+
+
 
 References: 
 
