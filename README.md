@@ -26,7 +26,11 @@ Katie:
  - researched eclipse mechanics
 
 Jon:
- - 
+ - built a shiny dashboard app that tracks peak eclipse-viewing locations by year, and displays them on a map (ggmap)
+ - in the app:
+  - created user input option for type of eclipse 
+  - created user input option for sub-type of eclipse (which changes based on their choice for type of eclipse)
+  - customized layout with CSS
 
 References: "Solar And Lunar Eclipses", NASA's Goddard Space Flight Center, solar and lunar eclipse predictions produced by Fred Espenak.
 https://www.kaggle.com/datasets/nasa/solar-eclipses.
